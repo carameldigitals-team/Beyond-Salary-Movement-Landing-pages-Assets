@@ -7,6 +7,8 @@ import {
   Check,
   HelpCircle
 } from 'lucide-react';
+import { ResilientArchitectureIcons } from './ResilientArchitectureIcons';
+import { SalaryDrainCategories } from './SalaryDrainCategories';
 
 interface LandingViewProps {
   onStart: () => void;
@@ -21,17 +23,6 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const billChips = [
-    'Rent',
-    'Food',
-    'Transport',
-    'School fees',
-    'Family needs',
-    'Bills',
-    'Unexpected expenses',
-    'Savings, if there is anything left'
-  ];
 
   const frustratedAttempts = [
     'Tried a side hustle',
@@ -248,7 +239,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
 
             {/* Calm, Relatable Visual Hero Concept */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="w-full max-w-[400px] bg-[#FFFFFF] border border-[#E1D5C5] rounded-3xl p-6 sm:p-7 shadow-[0_16px_36px_-10px_rgba(0,0,0,0.45)] text-[#211A17]">
+              <div className="w-full max-w-[420px] bg-[#FFFFFF] border border-[#E1D5C5] rounded-3xl p-6 sm:p-7 shadow-[0_16px_36px_-10px_rgba(0,0,0,0.45)] text-[#211A17]">
                 <div className="flex items-center justify-between pb-4 border-b border-[#E1D5C5]">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#2B1B14]">
                     The Reality of One Salary
@@ -293,25 +284,8 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
                       </span>
                     </div>
                     
-                    {/* 3 Balanced Pillars Visual */}
-                    <div className="grid grid-cols-3 gap-2 mb-2.5">
-                      <div className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-lg p-2 text-center">
-                        <div className="h-1.5 w-full rounded-full bg-[#2B1B14] mb-1.5"></div>
-                        <span className="text-[10px] font-bold text-[#2B1B14] block leading-tight">Career Base</span>
-                      </div>
-                      <div className="bg-[#FFFFFF] border border-[#C9A227] rounded-lg p-2 text-center shadow-2xs">
-                        <div className="h-1.5 w-full rounded-full bg-[#C9A227] mb-1.5"></div>
-                        <span className="text-[10px] font-bold text-[#2B1B14] block leading-tight">Skill Value</span>
-                      </div>
-                      <div className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-lg p-2 text-center">
-                        <div className="h-1.5 w-full rounded-full bg-[#4A3026] mb-1.5"></div>
-                        <span className="text-[10px] font-bold text-[#2B1B14] block leading-tight">Income System</span>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-[#211A17] leading-relaxed font-medium">
-                      Your career provides steady foundation while independent skills and systems create durable safety.
-                    </p>
+                    {/* 3D Animated Resilient Architecture Pillars */}
+                    <ResilientArchitectureIcons />
                   </div>
                 </div>
 
@@ -334,7 +308,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
       ========================================================================= */}
       <section id="relatable-reality" className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
         <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3 block">
               Step 1 • The Daily Reality
             </span>
@@ -351,19 +325,10 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
               <p>And when it finally arrives, you already know where most of it is going:</p>
             </div>
 
-            {/* Chips of common responsibilities */}
-            <div className="mt-6 flex flex-wrap gap-2.5">
-              {billChips.map((chip, idx) => (
-                <span 
-                  key={idx}
-                  className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-xl px-4 py-2 text-sm font-semibold text-[#211A17] shadow-2xs"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
+            {/* 3D Animated Expense Responsibilities Taking The Salary */}
+            <SalaryDrainCategories />
 
-            <p className="mt-6 text-base md:text-lg text-[#211A17] leading-relaxed">
+            <p className="mt-8 text-base md:text-lg text-[#211A17] leading-relaxed">
               Before you know it, you are counting down to the next salary again.
             </p>
 
