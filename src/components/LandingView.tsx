@@ -627,13 +627,33 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
 
               {/* FIRST MAJOR ASSESSMENT CTA */}
               <div className="mt-8">
-                <button
+                <motion.button
+                  id="cta-discover-score-1"
                   onClick={onStart}
-                  className="group flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-8 py-4 rounded-xl shadow-[0_10px_25px_-5px_rgba(201,162,39,0.38),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 w-full sm:w-auto cursor-pointer"
+                  animate={
+                    shouldReduceMotion
+                      ? { scale: 1 }
+                      : {
+                          scale: [1, 1.04, 1],
+                          boxShadow: [
+                            '0 8px 22px -5px rgba(201,162,39,0.35), inset 0 1px 1px rgba(255,255,255,0.35)',
+                            '0 14px 30px -4px rgba(201,162,39,0.55), inset 0 1px 1px rgba(255,255,255,0.5)',
+                            '0 8px 22px -5px rgba(201,162,39,0.35), inset 0 1px 1px rgba(255,255,255,0.35)',
+                          ],
+                        }
+                  }
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2.2,
+                    ease: "easeInOut",
+                  }}
+                  whileHover={{ scale: 1.055 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="group flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-8 py-4 rounded-xl w-full sm:w-auto cursor-pointer select-none origin-center"
                 >
                   <span className="tracking-wide">DISCOVER MY BEYOND SALARY SCORE</span>
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </button>
+                </motion.button>
                 <p className="mt-3 text-xs text-[#EFE6D6] font-medium">
                   Free • Takes approximately 5 minutes • Personalised to your answers
                 </p>
@@ -823,13 +843,33 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
           </div>
 
           <div className="mt-12 text-center">
-            <button
+            <motion.button
+              id="cta-discover-score-2"
               onClick={onStart}
-              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-9 py-4 rounded-xl shadow-[0_10px_25px_-5px_rgba(201,162,39,0.38),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 cursor-pointer"
+              animate={
+                shouldReduceMotion
+                  ? { scale: 1 }
+                  : {
+                      scale: [1, 1.04, 1],
+                      boxShadow: [
+                        '0 8px 22px -5px rgba(201,162,39,0.35), inset 0 1px 1px rgba(255,255,255,0.35)',
+                        '0 14px 30px -4px rgba(201,162,39,0.55), inset 0 1px 1px rgba(255,255,255,0.5)',
+                        '0 8px 22px -5px rgba(201,162,39,0.35), inset 0 1px 1px rgba(255,255,255,0.35)',
+                      ],
+                    }
+              }
+              transition={{
+                repeat: Infinity,
+                duration: 2.2,
+                ease: "easeInOut",
+              }}
+              whileHover={{ scale: 1.055 }}
+              whileTap={{ scale: 0.97 }}
+              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-9 py-4 rounded-xl cursor-pointer select-none origin-center"
             >
               <span className="tracking-wide">DISCOVER MY BEYOND SALARY SCORE</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </motion.button>
             <p className="mt-3 text-xs text-[#5C514B] font-semibold">
               Takes 5 minutes • 100% Free • No obligation
             </p>
@@ -996,13 +1036,33 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
             </div>
 
             <div className="mt-8">
-              <button
+              <motion.button
+                id="cta-discover-score-3"
                 onClick={onStart}
-                className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base md:text-lg px-9 py-4 rounded-xl shadow-[0_12px_28px_-6px_rgba(201,162,39,0.45),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 cursor-pointer"
+                animate={
+                  shouldReduceMotion
+                    ? { scale: 1 }
+                    : {
+                        scale: [1, 1.04, 1],
+                        boxShadow: [
+                          '0 10px 24px -5px rgba(201,162,39,0.4), inset 0 1px 1px rgba(255,255,255,0.35)',
+                          '0 16px 34px -4px rgba(201,162,39,0.62), inset 0 1px 1px rgba(255,255,255,0.5)',
+                          '0 10px 24px -5px rgba(201,162,39,0.4), inset 0 1px 1px rgba(255,255,255,0.35)',
+                        ],
+                      }
+                }
+                transition={{
+                  repeat: Infinity,
+                  duration: 2.2,
+                  ease: "easeInOut",
+                }}
+                whileHover={{ scale: 1.055 }}
+                whileTap={{ scale: 0.97 }}
+                className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base md:text-lg px-9 py-4 rounded-xl cursor-pointer select-none origin-center"
               >
                 <span className="tracking-wide">DISCOVER MY BEYOND SALARY SCORE</span>
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </button>
+              </motion.button>
             </div>
 
             <p className="mt-4 text-xs text-[#EFE6D6] font-semibold">
