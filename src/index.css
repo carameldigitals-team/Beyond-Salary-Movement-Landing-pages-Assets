@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  --deep: #03037E;
+  --deep-dark: #020254;
+  --bright: #00A3FF;
+  --gold: #FFBE4D;
+  --white: #FFFFFF;
+  --ink: #101040;
+  --body: #4A4C78;
+  --panel: #F3F8FF;
+  --line: #E1E7F7;
+  --danger: #E0913A;
+  --max: 1080px;
+}
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--body);
+    background: var(--white);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+}
+
+.font-accent {
+  font-family: 'Pacifico', cursive;
+  font-weight: 400;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 12s linear infinite;
+}

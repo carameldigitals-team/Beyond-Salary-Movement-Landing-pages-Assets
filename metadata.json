@@ -1,0 +1,6 @@
+{
+  "name": "The Beyond Salary Scorecard",
+  "description": "Discover your Beyond Salary Score, assess your income safety, and identify your clearest path to building income beyond your salary.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
