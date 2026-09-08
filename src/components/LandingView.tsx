@@ -1,17 +1,11 @@
 import React from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { 
-  CheckCircle2, 
   ArrowRight, 
-  ShieldAlert, 
+  ChevronDown,
   Sparkles, 
-  Compass, 
-  Target, 
-  TrendingUp,
-  Layers,
-  Clock,
-  Award,
-  Zap,
-  Check
+  Check,
+  HelpCircle
 } from 'lucide-react';
 
 interface LandingViewProps {
@@ -19,459 +13,1005 @@ interface LandingViewProps {
 }
 
 export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
-  const billChips = [
-    'Rent', 'Food', 'Transport', 'School fees', 
-    'Family responsibilities', 'Utility bills', 'Savings, if anything is left'
-  ];
+  const shouldReduceMotion = useReducedMotion();
 
-  const familiarItems = [
-    'You depend almost entirely on your monthly salary.',
-    'Your salary barely stretches to the end of the month.',
-    'You worry about what would happen if you lost your job.',
-    'You have little or no emergency savings.',
-    "You've tried side hustles that didn't work consistently.",
-    'You see people making money online and wonder what you are missing.',
-    'You want a skill that creates income, but do not know where to start.',
-    'You are interested in digital skills or AI, but not sure you are "techy enough".',
-    'You are tired of jumping from one opportunity to another.',
-    'You want something practical, real, and buildable.'
-  ];
-
-  const pillars = [
-    {
-      num: 1,
-      title: 'Salary Dependency Level',
-      desc: 'How dependent you are on one single employer or income source.'
-    },
-    {
-      num: 2,
-      title: 'Financial Safety Level',
-      desc: 'How prepared you are for emergencies, unexpected health bills, or job loss.'
-    },
-    {
-      num: 3,
-      title: 'Income Readiness Level',
-      desc: 'Whether you have a marketable skill or pathway to earn outside your job.'
-    },
-    {
-      num: 4,
-      title: 'Your Execution Gap',
-      desc: 'What is stopping you from turning intention and knowledge into consistent income.'
+  const scrollToReality = () => {
+    const el = document.getElementById('relatable-reality');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const billChips = [
+    'Rent',
+    'Food',
+    'Transport',
+    'School fees',
+    'Family needs',
+    'Bills',
+    'Unexpected expenses',
+    'Savings, if there is anything left'
+  ];
+
+  const frustratedAttempts = [
+    'Tried a side hustle',
+    'Joined an online training',
+    'Explored Forex or Crypto',
+    'Network marketing / MLM',
+    'Buying and selling products',
+    'Started a business that drained time',
+    'Chased an opportunity promising quick income'
+  ];
+
+  const benefits = [
+    'How dependent you currently are on one income source',
+    'Your current financial safety level and runway',
+    'Your income and skill readiness',
+    'Your biggest Beyond Salary bottleneck',
+    'The hidden gaps keeping you stuck in the monthly cycle',
+    'Your personalised next step to build options safely'
   ];
 
   const resultCards = [
     {
-      tag: 'Profile 1',
+      tag: 'Profile 01',
       title: 'The Salary Survivor',
-      desc: 'Heavily dependent on one income source. Highest priority: safety cushion, clarity, and stopping random distractions.'
+      desc: 'Heavily dependent on one paycheck. Your first priority is creating a safety runway, protecting your family, and cutting out distracting shiny objects.'
     },
     {
-      tag: 'Profile 2',
+      tag: 'Profile 02',
       title: 'The Income Explorer',
-      desc: 'You know you need more income — still searching for the right single pathway without spreading yourself thin.'
+      desc: 'You know one salary is risky and are actively searching for the right single pathway without spreading yourself thin or wasting money.'
     },
     {
-      tag: 'Profile 3',
+      tag: 'Profile 03',
       title: 'The Ready But Stuck',
-      desc: 'You have valuable skills, but struggle with packaging an offer and finding paying clients.'
+      desc: 'You already possess valuable professional knowledge and skills, but struggle with packaging an offer and converting ability into paying income.'
     },
     {
-      tag: 'Profile 4',
+      tag: 'Profile 04',
       title: 'The Income Builder',
-      desc: 'Already generating extra revenue. Your next frontier: consistency, systems, and productized scale.'
+      desc: 'Already earning outside your job. Your next focus is stability, repeatable operating systems, and scalable digital leverage.'
     }
   ];
 
   const steps = [
     {
       num: '01',
-      title: 'Answer 20 simple questions',
-      desc: 'About your income stability, financial runway, skills, and current execution.'
+      title: 'Answer a few simple questions',
+      desc: 'Tell us about your current income situation, financial safety, skills and readiness.'
     },
     {
       num: '02',
       title: 'Get your personalised score',
-      desc: 'A comprehensive 0–100 score benchmarked across four income security pillars.'
+      desc: 'Your answers will be analysed across four important areas of income security.'
     },
     {
       num: '03',
       title: 'Discover your biggest bottleneck',
-      desc: 'Pinpoint the single greatest constraint keeping you tied to one paycheck.'
+      desc: 'Find out what may be keeping you dependent on one income source.'
     },
     {
       num: '04',
-      title: 'Get your 7-day action plan',
-      desc: 'Practical, milestone-driven guidance and structured next steps.'
+      title: 'Get your recommended next step',
+      desc: 'Receive practical guidance based on your current situation.'
     }
   ];
 
+  const whoItsFor = [
+    "You're employed and want another income stream, without quitting your job.",
+    "You carry responsibilities for your family or dependents and feel the monthly squeeze.",
+    "You've recently experienced job uncertainty or company restructuring and want more financial runway.",
+    "You feel vulnerable knowing that if your one salary stops, survival mode begins.",
+    "You've tried side hustles before, but nothing has stuck consistently.",
+    "You want a real, sellable skill and a practical system you can build step-by-step."
+  ];
+
+  const notForYou = [
+    "Looking for a get-rich-quick opportunity",
+    "Expecting guaranteed income without learning, effort or consistency",
+    "Looking for someone to magically solve your financial problems for you",
+    "Only interested in shortcuts, hype or overnight success",
+    "Unwilling to honestly assess your current situation",
+    "Looking for a reason to quit your job without a practical plan",
+    "Not ready to take responsibility for building additional income options"
+  ];
+
   return (
-    <div className="w-full">
-      {/* Hero Section */}
-      <section className="pt-10 pb-16 md:py-20 bg-[radial-gradient(640px_360px_at_85%_-10%,rgba(0,163,255,0.12),transparent_70%)]">
+    <div className="w-full text-[#211A17] font-['Montserrat']">
+      
+      {/* =========================================================================
+          SECTION 1: HERO SECTION
+          Background: Rich Espresso Brown #2B1B14
+          Focus: High contrast, warm dark luxury, empathy, no premature quiz CTA
+      ========================================================================= */}
+      <section className="pt-12 pb-16 md:pt-16 md:pb-24 bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026]">
         <div className="max-w-[1080px] mx-auto px-5">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 text-xs md:text-sm font-bold text-[#03037E] bg-[#F3F8FF] border border-[#E1E7F7] px-3.5 py-1.5 rounded-full mb-5">
-                <span className="w-2 h-2 rounded-full bg-[#FFBE4D] animate-pulse"></span>
-                <span>The Beyond Salary Scorecard™ — Free, 5 minutes</span>
+              {/* Eyebrow with Premium Subtle Sequence Animation */}
+              <div className="flex items-center gap-3 mb-6">
+                {/* 1 & 2: Thin Antique Gold line #C9A227 expanding smoothly into place */}
+                <motion.div
+                  initial={shouldReduceMotion ? { width: 32, opacity: 1 } : { width: 0, opacity: 0 }}
+                  animate={{ width: 32, opacity: 1 }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  className="h-[2px] bg-[#C9A227] rounded-full shrink-0 shadow-[0_0_8px_rgba(201,162,39,0.4)]"
+                  aria-hidden="true"
+                />
+
+                {/* 3 & 4: Eyebrow badge container with soft drop shadow and fade/upward motion */}
+                <motion.div
+                  initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
+                  className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm font-semibold bg-[#38231A] border border-[#C9A227]/40 px-3.5 sm:px-4 py-2 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#C9A227] shadow-[0_0_6px_#C9A227] shrink-0" />
+                  <span className="tracking-wider uppercase text-[11px] md:text-xs font-semibold text-[#F8F4EC]">
+                    FOR AFRICAN PROFESSIONALS WHO WANT
+                  </span>
+                  <motion.span
+                    initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
+                    animate={
+                      shouldReduceMotion
+                        ? { scale: 1, opacity: 1 }
+                        : {
+                            scale: [0.5, 1.25, 0.94, 1.06, 1],
+                            opacity: [0, 1, 1, 1, 1],
+                          }
+                    }
+                    transition={{
+                      duration: 0.9,
+                      delay: 0.55,
+                      times: [0, 0.45, 0.7, 0.88, 1],
+                      ease: "easeOut",
+                    }}
+                    className="inline-flex items-center origin-center"
+                  >
+                    <motion.span
+                      animate={
+                        shouldReduceMotion
+                          ? { scale: 1 }
+                          : {
+                              scale: [1, 1.07, 1],
+                            }
+                      }
+                      transition={{
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        duration: 2.4,
+                        delay: 1.6,
+                        ease: "easeInOut",
+                      }}
+                      className="inline-flex items-center gap-1 font-bold text-[11px] md:text-xs tracking-wider uppercase text-[#C9A227]"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-[#C9A227] shrink-0 inline-block drop-shadow-[0_0_6px_rgba(201,162,39,0.7)]" />
+                      <span className="shimmer-gold-text">
+                        MORE FINANCIAL OPTIONS
+                      </span>
+                    </motion.span>
+                  </motion.span>
+                </motion.div>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.2rem] font-bold text-[#101040] leading-[1.12] tracking-tight">
-                How safe is your <span className="text-[#03037E]">income?</span>
+              {/* Main Headline */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.1rem] font-bold text-[#F8F4EC] leading-[1.15] tracking-tight">
+                YOU'VE DONE EVERYTHING RIGHT.
+                <span className="block mt-2 text-[#EFE6D6]">
+                  SO WHY DOES ONE SALARY STILL FEEL SO UNSAFE?
+                </span>
               </h1>
 
-              <p className="mt-5 text-base md:text-lg text-[#4A4C78] leading-relaxed max-w-xl">
-                Take the 5-minute Beyond Salary Scorecard™ to discover how financially vulnerable you are when your life depends on one income source, identify what's keeping you stuck, and find your clearest next step toward building income beyond your salary.
-              </p>
-
-              <div className="mt-6 space-y-2 text-sm text-[#7476A6]">
-                <div className="flex items-center gap-2">
-                  <span className="text-[#00A3FF] font-bold">•</span>
-                  <span>You don't need to quit your job.</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[#00A3FF] font-bold">•</span>
-                  <span>You don't need another random side hustle.</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[#00A3FF] font-bold">•</span>
-                  <span>You don't need to figure everything out overnight.</span>
-                </div>
-                <div className="pt-1 text-[#101040] font-semibold flex items-center gap-2">
-                  <Check className="w-4 h-4 text-[#00A3FF]" />
-                  <span>You simply need to understand where you are right now, and identify the smartest next step.</span>
-                </div>
+              {/* Subheadline */}
+              <div className="mt-6 space-y-3 text-base md:text-lg text-[#F3EDE3] leading-relaxed">
+                <p>
+                  You went to school. You got the job. You work hard and carry your responsibilities.
+                </p>
+                <p>
+                  But somehow, the money comes in, the bills take over, and before the month ends, you are waiting for the next salary again.
+                </p>
+                <p className="text-[#E1D5C5] text-sm md:text-base font-medium">
+                  And deep down, there is a question you may not always say out loud:
+                </p>
               </div>
 
+              {/* Emphasized Question */}
+              <div className="mt-5 p-5 rounded-2xl bg-[#38241B] border-l-4 border-[#C9A227] shadow-sm">
+                <p className="text-lg md:text-xl font-bold text-[#C9A227] italic">
+                  "What happens if this one income suddenly stops?"
+                </p>
+              </div>
+
+              {/* Supporting Text */}
+              <div className="mt-6 space-y-2 text-sm md:text-base text-[#F3EDE3] leading-relaxed">
+                <p className="font-semibold text-[#F8F4EC]">
+                  You are not lazy. You are not failing. And you are not wrong for having a job.
+                </p>
+                <p className="text-[#E1D5C5]">
+                  But when too much of your life depends on one source of income, even a good salary can start to feel unsafe.
+                </p>
+              </div>
+
+              {/* Primary CTA Button: Subtle Scroll Down */}
               <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <button 
-                  onClick={onStart}
-                  className="group flex items-center justify-center gap-2.5 bg-[#03037E] hover:bg-[#020254] text-white font-bold text-base px-8 py-4 rounded-xl shadow-lg shadow-[#03037E]/25 transition-all duration-200 active:scale-95 w-full sm:w-auto"
+                <button
+                  onClick={scrollToReality}
+                  className="group flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-8 py-4 rounded-xl shadow-[0_10px_25px_-5px_rgba(201,162,39,0.38),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 w-full sm:w-auto cursor-pointer"
                 >
-                  <span>Take the Free Scorecard</span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  <span className="tracking-wide">SEE IF THIS SOUNDS LIKE YOU</span>
+                  <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-1" />
                 </button>
-              </div>
-
-              <div className="mt-3 text-xs text-[#8082AC]">
-                Free. Takes less than 5 minutes. <strong className="text-[#03037E]">Get your personalised result instantly.</strong>
               </div>
             </div>
 
-            {/* Gauge Preview Graphic */}
+            {/* Calm, Relatable Visual Hero Concept */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="w-full max-w-[340px] bg-[#F3F8FF] border border-[#E1E7F7] rounded-2xl p-7 text-center shadow-sm relative overflow-hidden">
-                <div className="text-xs font-bold tracking-wider uppercase text-[#03037E] mb-2">
-                  Your Beyond Salary Score
+              <div className="w-full max-w-[400px] bg-[#FFFFFF] border border-[#E1D5C5] rounded-3xl p-6 sm:p-7 shadow-[0_16px_36px_-10px_rgba(0,0,0,0.45)] text-[#211A17]">
+                <div className="flex items-center justify-between pb-4 border-b border-[#E1D5C5]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#2B1B14]">
+                    The Reality of One Salary
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#2B1B14] bg-[#EFE6D6] px-2.5 py-0.5 rounded-full border border-[#E1D5C5]">
+                    <Sparkles className="w-3 h-3 text-[#C9A227]" />
+                    <span>The Shift</span>
+                  </span>
                 </div>
 
-                <div className="my-4 relative flex justify-center">
-                  <svg viewBox="0 0 220 130" className="w-full max-w-[240px]" role="img" aria-label="Income safety gauge preview">
+                {/* Conceptual Graphic: Single Point of Failure vs Multiple Options */}
+                <div className="my-5 space-y-4">
+                  {/* Vulnerable State */}
+                  <div className="p-4 rounded-2xl bg-[#F8F4EC] border border-[#E1D5C5]">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#5C514B] mb-2">
+                      <span className="tracking-wider uppercase text-[11px]">The Current Reality</span>
+                      <span className="inline-flex items-center gap-1 text-[#8B3E1E] bg-[#8B3E1E]/10 px-2 py-0.5 rounded-full text-[10px] font-bold border border-[#8B3E1E]/20">
+                        1 Single Dependency
+                      </span>
+                    </div>
+                    <div className="w-full bg-[#E1D5C5] h-3 rounded-full overflow-hidden mb-2.5">
+                      <div className="bg-[#2B1B14] h-full w-[95%] rounded-full"></div>
+                    </div>
+                    <p className="text-xs text-[#5C514B] leading-relaxed font-medium">
+                      One employer carrying 100% of your rent, family, bills, and lifestyle. If this stops, everything stalls.
+                    </p>
+                  </div>
+
+                  {/* Transition Indicator */}
+                  <div className="flex justify-center text-[#C9A227]">
+                    <div className="w-8 h-8 rounded-full bg-[#EFE6D6] border border-[#C9A227]/40 flex items-center justify-center text-xs font-bold text-[#2B1B14] shadow-xs">
+                      ↓
+                    </div>
+                  </div>
+
+                  {/* Built Options State */}
+                  <div className="p-4 rounded-2xl bg-[#F8F4EC] border border-[#C9A227]/70 shadow-xs">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#2B1B14] mb-2.5">
+                      <span className="tracking-wider uppercase text-[11px]">The Resilient Architecture</span>
+                      <span className="inline-flex items-center gap-1 text-[#2B1B14] bg-[#C9A227]/25 px-2 py-0.5 rounded-full text-[10px] font-bold border border-[#C9A227]/40">
+                        3 Built Options
+                      </span>
+                    </div>
+                    
+                    {/* 3 Balanced Pillars Visual */}
+                    <div className="grid grid-cols-3 gap-2 mb-2.5">
+                      <div className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-lg p-2 text-center">
+                        <div className="h-1.5 w-full rounded-full bg-[#2B1B14] mb-1.5"></div>
+                        <span className="text-[10px] font-bold text-[#2B1B14] block leading-tight">Career Base</span>
+                      </div>
+                      <div className="bg-[#FFFFFF] border border-[#C9A227] rounded-lg p-2 text-center shadow-2xs">
+                        <div className="h-1.5 w-full rounded-full bg-[#C9A227] mb-1.5"></div>
+                        <span className="text-[10px] font-bold text-[#2B1B14] block leading-tight">Skill Value</span>
+                      </div>
+                      <div className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-lg p-2 text-center">
+                        <div className="h-1.5 w-full rounded-full bg-[#4A3026] mb-1.5"></div>
+                        <span className="text-[10px] font-bold text-[#2B1B14] block leading-tight">Income System</span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-[#211A17] leading-relaxed font-medium">
+                      Your career provides steady foundation while independent skills and systems create durable safety.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-2 text-center">
+                  <p className="text-xs text-[#5C514B] font-medium leading-normal">
+                    No panic. No quitting your job. <strong className="text-[#2B1B14] block sm:inline">Building options before you desperately need them.</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 2: RELATABLE REALITY
+          Background: Warm Ivory #F8F4EC
+          Focus: High readability, Deep Charcoal text #211A17, Rich Espresso Headings #2B1B14
+      ========================================================================= */}
+      <section id="relatable-reality" className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
+        <div className="max-w-[1080px] mx-auto px-5">
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3 block">
+              Step 1 • The Daily Reality
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14] leading-tight">
+              YOUR SALARY COMES IN.
+              <span className="block mt-1">YOUR RESPONSIBILITIES TAKE IT.</span>
+              <span className="block mt-1 text-[#5C514B]">THEN YOU WAIT FOR THE NEXT ONE.</span>
+            </h2>
+
+            <div className="mt-6 space-y-4 text-base md:text-lg text-[#211A17] leading-relaxed">
+              <p>Every month, the same cycle begins.</p>
+              <p>You work hard. You wait for your salary.</p>
+              <p>And when it finally arrives, you already know where most of it is going:</p>
+            </div>
+
+            {/* Chips of common responsibilities */}
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              {billChips.map((chip, idx) => (
+                <span 
+                  key={idx}
+                  className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-xl px-4 py-2 text-sm font-semibold text-[#211A17] shadow-2xs"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+
+            <p className="mt-6 text-base md:text-lg text-[#211A17] leading-relaxed">
+              Before you know it, you are counting down to the next salary again.
+            </p>
+
+            <div className="mt-8 p-6 rounded-2xl bg-[#FFFFFF] border border-[#E1D5C5] max-w-2xl shadow-sm">
+              <p className="text-sm font-bold uppercase tracking-wider text-[#5C514B] mb-1">
+                And sometimes, you may quietly ask yourself:
+              </p>
+              <p className="text-xl md:text-2xl font-bold text-[#2B1B14] italic mb-4">
+                "What exactly am I doing wrong?"
+              </p>
+
+              <div className="pt-4 border-t border-[#E1D5C5]">
+                <p className="text-sm font-bold text-[#C9A227] uppercase tracking-wide mb-1">
+                  The truth?
+                </p>
+                <p className="text-base text-[#211A17] leading-relaxed font-medium">
+                  You may not be doing anything wrong. You may simply be operating with <strong className="text-[#2B1B14]">only one financial option</strong>.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 3: THE HIDDEN FEAR
+          Background: Soft Cream #EFE6D6
+          Focus: What happens if salary stops tomorrow? Dependents & responsibilities
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#EFE6D6] border-b border-[#E1D5C5]">
+        <div className="max-w-[1080px] mx-auto px-5">
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3 block">
+              Step 2 • The Hidden Vulnerability
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14] leading-tight">
+              THE QUESTION MOST PEOPLE DON'T WANT TO ASK OUT LOUD
+            </h2>
+
+            <div className="mt-6 space-y-4 text-base md:text-lg text-[#211A17] leading-relaxed">
+              <p className="font-bold text-[#2B1B14] text-lg sm:text-xl">
+                If your salary stopped tomorrow...
+              </p>
+              <p>
+                How long could you realistically survive without borrowing money?
+              </p>
+            </div>
+
+            {/* Realistic Questions Grid */}
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="bg-[#FFFFFF] p-4 rounded-xl border border-[#E1D5C5] shadow-2xs">
+                <span className="text-xs font-bold text-[#C9A227] block mb-1">Impact #1</span>
+                <span className="text-sm font-bold text-[#211A17]">What happens to your rent?</span>
+              </div>
+              <div className="bg-[#FFFFFF] p-4 rounded-xl border border-[#E1D5C5] shadow-2xs">
+                <span className="text-xs font-bold text-[#C9A227] block mb-1">Impact #2</span>
+                <span className="text-sm font-bold text-[#211A17]">What happens to your family?</span>
+              </div>
+              <div className="bg-[#FFFFFF] p-4 rounded-xl border border-[#E1D5C5] shadow-2xs">
+                <span className="text-xs font-bold text-[#C9A227] block mb-1">Impact #3</span>
+                <span className="text-sm font-bold text-[#211A17]">What happens to your children?</span>
+              </div>
+              <div className="bg-[#FFFFFF] p-4 rounded-xl border border-[#E1D5C5] shadow-2xs">
+                <span className="text-xs font-bold text-[#C9A227] block mb-1">Impact #4</span>
+                <span className="text-sm font-bold text-[#211A17]">What happens to your bills?</span>
+              </div>
+              <div className="bg-[#FFFFFF] p-4 rounded-xl border border-[#E1D5C5] shadow-2xs">
+                <span className="text-xs font-bold text-[#C9A227] block mb-1">Impact #5</span>
+                <span className="text-sm font-bold text-[#211A17]">What happens to your plans?</span>
+              </div>
+              <div className="bg-[#FFFFFF] p-4 rounded-xl border border-[#E1D5C5] shadow-2xs">
+                <span className="text-xs font-bold text-[#C9A227] block mb-1">Impact #6</span>
+                <span className="text-sm font-bold text-[#211A17]">How long before stress peaks?</span>
+              </div>
+            </div>
+
+            <div className="mt-8 space-y-3 text-base md:text-lg text-[#211A17] leading-relaxed">
+              <p>
+                For most professionals, losing one job does not only affect them. It affects everyone who depends on them.
+              </p>
+              <p>
+                And that is why depending on only one source of income can feel frightening.
+              </p>
+              <p className="font-bold text-[#2B1B14]">
+                Not because your salary is useless — but because one income source may be carrying too much.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 4: THE FRUSTRATION / FAILED ATTEMPTS
+          Background: Warm Ivory #F8F4EC
+          Focus: Validating fatigue from courses, forex, MLM, tiredness of hype
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
+        <div className="max-w-[1080px] mx-auto px-5">
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3 block">
+              Step 3 • The Frustration
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14] leading-tight">
+              MAYBE YOU HAVE ALREADY TRIED TO FIX IT.
+            </h2>
+
+            <div className="mt-6 space-y-4 text-base md:text-lg text-[#211A17] leading-relaxed">
+              <p>Maybe you have tried a side hustle.</p>
+              <p>Maybe you joined a training or bought a course online.</p>
+              <p>Maybe you tried forex, network marketing, buying and selling, a business, or another opportunity someone promised would change your life.</p>
+            </div>
+
+            {/* List of past attempts */}
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {frustratedAttempts.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2.5 bg-[#FFFFFF] p-3 rounded-xl border border-[#E1D5C5] text-sm text-[#211A17] font-medium shadow-2xs">
+                  <span className="text-[#C9A227] font-bold">•</span>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 space-y-4 text-base md:text-lg text-[#211A17] leading-relaxed">
+              <p>
+                Maybe you spent money. Maybe you spent valuable time. Maybe nothing really worked consistently.
+              </p>
+              <p className="font-bold text-[#2B1B14]">
+                And now you are tired:
+              </p>
+              <ul className="space-y-2.5 text-[#211A17] pl-1">
+                <li className="flex items-center gap-2.5 font-medium">
+                  <span className="text-[#C9A227] font-bold">✕</span>
+                  <span>Tired of starting over from scratch.</span>
+                </li>
+                <li className="flex items-center gap-2.5 font-medium">
+                  <span className="text-[#C9A227] font-bold">✕</span>
+                  <span>Tired of wasting money on empty theories.</span>
+                </li>
+                <li className="flex items-center gap-2.5 font-medium">
+                  <span className="text-[#C9A227] font-bold">✕</span>
+                  <span>Tired of jumping from one opportunity to another.</span>
+                </li>
+              </ul>
+
+              <div className="pt-4 p-5 rounded-2xl bg-[#FFFFFF] border border-[#E1D5C5] shadow-sm">
+                <p className="text-base md:text-lg font-bold text-[#2B1B14]">
+                  You do not want another random promise. You want something practical. Something real. Something you can actually build without quitting your job.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 5: THE CORE REFRAME / CLARITY
+          Background: Soft Cream #EFE6D6
+          Focus: Don't need another opportunity, you need clarity
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#EFE6D6] border-b border-[#E1D5C5]">
+        <div className="max-w-[1080px] mx-auto px-5">
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3 block">
+              Step 4 • The Core Reframe
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14] leading-tight">
+              YOU DO NOT NEED ANOTHER RANDOM OPPORTUNITY.
+              <span className="block mt-1 text-[#C9A227]">YOU NEED CLARITY.</span>
+            </h2>
+
+            <div className="mt-6 space-y-4 text-base md:text-lg text-[#211A17] leading-relaxed">
+              <p className="font-bold text-[#2B1B14]">
+                Before you start another side hustle... Before you pay for another training... Before you chase another opportunity...
+              </p>
+              <p>
+                You need to understand where you are right now.
+              </p>
+            </div>
+
+            {/* Reflection questions cards */}
+            <div className="mt-6 space-y-3">
+              <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E1D5C5] flex items-start gap-3 shadow-2xs">
+                <HelpCircle className="w-5 h-5 text-[#C9A227] shrink-0 mt-0.5" />
+                <span className="text-sm md:text-base font-semibold text-[#211A17]">
+                  What is currently making you financially vulnerable?
+                </span>
+              </div>
+              <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E1D5C5] flex items-start gap-3 shadow-2xs">
+                <HelpCircle className="w-5 h-5 text-[#C9A227] shrink-0 mt-0.5" />
+                <span className="text-sm md:text-base font-semibold text-[#211A17]">
+                  What is keeping you dependent on one single employer or income source?
+                </span>
+              </div>
+              <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E1D5C5] flex items-start gap-3 shadow-2xs">
+                <HelpCircle className="w-5 h-5 text-[#C9A227] shrink-0 mt-0.5" />
+                <span className="text-sm md:text-base font-semibold text-[#211A17]">
+                  Do you already have a marketable skill you can build on, or do you need a new one?
+                </span>
+              </div>
+              <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E1D5C5] flex items-start gap-3 shadow-2xs">
+                <HelpCircle className="w-5 h-5 text-[#C9A227] shrink-0 mt-0.5" />
+                <span className="text-sm md:text-base font-semibold text-[#211A17]">
+                  Do you already have knowledge, but struggle to package it into paying income?
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-8 p-5 rounded-2xl bg-[#FFFFFF] border-l-4 border-[#C9A227] shadow-sm">
+              <p className="text-base md:text-lg font-bold text-[#2B1B14]">
+                Because you cannot create a clear plan if you do not clearly understand your starting point.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 6: INTRODUCE THE BEYOND SALARY SCORECARD™ (FIRST MAJOR CTA)
+          Background: Rich Espresso Brown #2B1B14
+          Focus: High-impact dark luxury presentation, Antique Gold CTA
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026]">
+        <div className="max-w-[1080px] mx-auto px-5">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            <div className="lg:col-span-7">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2 block">
+                The Practical Solution
+              </span>
+
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#F8F4EC] leading-tight">
+                THAT IS EXACTLY WHY WE CREATED
+                <span className="block mt-1 text-[#EFE6D6]">THE BEYOND SALARY SCORECARD™</span>
+              </h2>
+
+              <p className="mt-4 text-base md:text-lg text-[#F3EDE3] leading-relaxed">
+                A free 5-minute assessment designed to help you understand where you currently stand and identify your clearest next step towards building income beyond your salary.
+              </p>
+
+              <div className="mt-6">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3">
+                  In 5 minutes, you will discover:
+                </div>
+                <div className="space-y-2.5">
+                  {benefits.map((benefit, idx) => (
+                    <div key={idx} className="flex items-start gap-3 bg-[#FFFFFF] p-3 rounded-xl border border-[#E1D5C5] shadow-2xs">
+                      <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#2B1B14] flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
+                      </div>
+                      <span className="text-sm md:text-base text-[#211A17] font-semibold leading-snug">
+                        {benefit}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* FIRST MAJOR ASSESSMENT CTA */}
+              <div className="mt-8">
+                <button
+                  onClick={onStart}
+                  className="group flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-8 py-4 rounded-xl shadow-[0_10px_25px_-5px_rgba(201,162,39,0.38),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 w-full sm:w-auto cursor-pointer"
+                >
+                  <span className="tracking-wide">DISCOVER MY BEYOND SALARY SCORE</span>
+                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </button>
+                <p className="mt-3 text-xs text-[#EFE6D6] font-medium">
+                  Free • Takes approximately 5 minutes • Personalised to your answers
+                </p>
+              </div>
+            </div>
+
+            {/* Gauge Graphic Preview */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="w-full max-w-[370px] bg-[#FFFFFF] border border-[#E1D5C5] rounded-3xl p-7 text-center shadow-[0_16px_36px_-10px_rgba(0,0,0,0.45)] text-[#211A17]">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E1D5C5] mb-4">
+                  <span className="text-xs font-bold tracking-wider uppercase text-[#2B1B14]">
+                    Diagnostic Output
+                  </span>
+                  <span className="text-[11px] font-bold text-[#C9A227] bg-[#EFE6D6] px-2.5 py-0.5 rounded-full border border-[#E1D5C5]">
+                    0 — 100 Index
+                  </span>
+                </div>
+
+                <div className="my-3 relative flex justify-center">
+                  <svg viewBox="0 0 240 145" className="w-full max-w-[260px]" role="img" aria-label="Income safety gauge preview">
                     <defs>
-                      <linearGradient id="arcGradPreview" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#03037E" />
-                        <stop offset="55%" stopColor="#00A3FF" />
-                        <stop offset="100%" stopColor="#FFBE4D" />
+                      <linearGradient id="arcGradPrecision" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#8B3E1E" />
+                        <stop offset="35%" stopColor="#4A3026" />
+                        <stop offset="70%" stopColor="#C9A227" />
+                        <stop offset="100%" stopColor="#2E6F40" />
                       </linearGradient>
                     </defs>
+                    {/* Background track */}
                     <path 
-                      d="M 14 118 A 96 96 0 0 1 206 118" 
+                      d="M 22 130 A 98 98 0 0 1 218 130" 
                       fill="none" 
-                      stroke="#E1E7F7" 
+                      stroke="#E1D5C5" 
                       strokeWidth="16" 
                       strokeLinecap="round"
                     />
+                    {/* Colored calibrated arc */}
                     <path 
-                      d="M 14 118 A 96 96 0 0 1 206 118" 
+                      d="M 22 130 A 98 98 0 0 1 218 130" 
                       fill="none" 
-                      stroke="url(#arcGradPreview)" 
+                      stroke="url(#arcGradPrecision)" 
                       strokeWidth="16" 
                       strokeLinecap="round" 
-                      strokeDasharray="302" 
+                      strokeDasharray="308" 
                       strokeDashoffset="90"
                     />
-                    <g style={{ transformOrigin: '110px 118px', transform: 'rotate(20deg)', transition: 'transform 1s ease' }}>
-                      <line x1="110" y1="118" x2="110" y2="42" stroke="#101040" strokeWidth="4" strokeLinecap="round" />
-                      <circle cx="110" cy="118" r="7" fill="#101040" />
+                    {/* Calibrated Tick Marks */}
+                    <line x1="22" y1="130" x2="34" y2="130" stroke="#FFFFFF" strokeWidth="2" />
+                    <line x1="120" y1="32" x2="120" y2="44" stroke="#FFFFFF" strokeWidth="2" />
+                    <line x1="218" y1="130" x2="206" y2="130" stroke="#FFFFFF" strokeWidth="2" />
+
+                    {/* Needle with Gold Pivot */}
+                    <g style={{ transformOrigin: '120px 130px', transform: 'rotate(22deg)' }}>
+                      <line x1="120" y1="130" x2="120" y2="46" stroke="#2B1B14" strokeWidth="4.5" strokeLinecap="round" />
+                      <circle cx="120" cy="130" r="10" fill="#2B1B14" />
+                      <circle cx="120" cy="130" r="5" fill="#C9A227" />
                     </g>
                   </svg>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 text-xs text-[#8082AC] bg-white border border-[#E1E7F7] px-3 py-1 rounded-full">
-                  <Sparkles className="w-3.5 h-3.5 text-[#FFBE4D]" />
+                <div className="grid grid-cols-4 gap-1 text-[10px] font-bold text-[#5C514B] mb-4 pb-3 border-b border-[#E1D5C5]">
+                  <span>Vulnerable</span>
+                  <span>Strained</span>
+                  <span className="text-[#C9A227]">Strategic</span>
+                  <span className="text-[#2E6F40]">Sovereign</span>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 text-xs text-[#2B1B14] bg-[#F8F4EC] border border-[#E1D5C5] px-3.5 py-1.5 rounded-full mb-2.5 font-bold">
+                  <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
                   <span>Personalised to your 20 answers</span>
                 </div>
+
+                <p className="text-xs text-[#5C514B] leading-relaxed font-medium">
+                  Identifies your primary bottleneck across Dependency, Safety, Skill, and Execution.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 7: CORE BRAND BELIEF
+          Background: Warm Ivory #F8F4EC
+          Focus: Your salary is not the problem, having no options is
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
+        <div className="max-w-[1080px] mx-auto px-5">
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3 block">
+              Core Brand Philosophy
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14] leading-tight">
+              YOUR SALARY IS NOT THE PROBLEM.
+              <span className="block mt-1 text-[#5C514B]">THE PROBLEM IS HAVING NO OPTIONS BEYOND IT.</span>
+            </h2>
+
+            <div className="mt-6 space-y-4 text-base md:text-lg text-[#211A17] leading-relaxed">
+              <p>You do not have to quit your job.</p>
+              <p>Your salary can be your foundation while you build something else.</p>
+              <p>The goal is not to replace your salary overnight, nor to chase every opportunity online.</p>
+            </div>
+
+            <div className="mt-8 p-6 rounded-2xl bg-[#FFFFFF] border border-[#E1D5C5] shadow-sm">
+              <h3 className="text-base font-bold uppercase tracking-wide text-[#2B1B14] mb-3">
+                The Real Goal is to Build Options:
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm md:text-base text-[#211A17]">
+                <div className="flex items-center gap-2.5 font-medium">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A227]"></div>
+                  <span>A practical, high-value skill</span>
+                </div>
+                <div className="flex items-center gap-2.5 font-medium">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A227]"></div>
+                  <span>A reliable operating system</span>
+                </div>
+                <div className="flex items-center gap-2.5 font-medium">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A227]"></div>
+                  <span>Another consistent way to create income</span>
+                </div>
+                <div className="flex items-center gap-2.5 font-medium">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A227]"></div>
+                  <span>More control over your personal future</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Bill & Risk Section */}
-      <section className="py-14 md:py-18 bg-white border-t border-[#E1E7F7]">
+      {/* =========================================================================
+          SECTION 8: KEY BRAND STATEMENT
+          Background: Rich Espresso Brown #2B1B14
+          Focus: Prominent statement in Antique Gold #C9A227, Montserrat Bold, high contrast
+      ========================================================================= */}
+      <section className="py-14 md:py-20 bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026]">
+        <div className="max-w-[1080px] mx-auto px-5 text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-bold text-[#C9A227] leading-snug"
+              style={{ fontFamily: "'Montserrat', sans-serif" }}
+            >
+              "The goal isn't to panic. It's to build options before you desperately need them."
+            </h2>
+            <p className="mt-5 text-sm md:text-base text-[#EFE6D6] max-w-xl mx-auto leading-relaxed font-medium">
+              Not hype. Not overnight promises. Grounded, practical skill and system building.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 9: HOW THE SCORECARD WORKS
+          Background: Soft Cream #EFE6D6
+          Focus: 4 clear steps on white cards with Antique Gold numerals
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#EFE6D6] border-b border-[#E1D5C5]">
         <div className="max-w-[1080px] mx-auto px-5">
-          <div className="flex flex-wrap gap-2 mb-6">
-            {billChips.map((chip, idx) => (
-              <span 
+          <div className="max-w-2xl mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2 block">
+              Simple 4-Step Process
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14]">
+              HOW THE BEYOND SALARY SCORECARD™ WORKS
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {steps.map((step, idx) => (
+              <div 
                 key={idx} 
-                className="bg-[#F3F8FF] border border-[#E1E7F7] rounded-lg px-3.5 py-1.5 text-xs md:text-sm font-medium text-[#101040]"
+                className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl p-6 shadow-sm hover:border-[#C9A227] transition-colors"
               >
-                {chip}
+                <div className="text-3xl font-extrabold text-[#C9A227] mb-3">
+                  {step.num}
+                </div>
+                <h3 className="text-base font-bold text-[#2B1B14] mb-2 leading-snug">
+                  {step.title}
+                </h3>
+                <p className="text-xs md:text-sm text-[#5C514B] leading-relaxed font-medium">
+                  {step.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <button
+              onClick={onStart}
+              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-9 py-4 rounded-xl shadow-[0_10px_25px_-5px_rgba(201,162,39,0.38),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 cursor-pointer"
+            >
+              <span className="tracking-wide">DISCOVER MY BEYOND SALARY SCORE</span>
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            </button>
+            <p className="mt-3 text-xs text-[#5C514B] font-semibold">
+              Takes 5 minutes • 100% Free • No obligation
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 10: THIS IS FOR YOU IF
+          Background: Soft Cream #EFE6D6
+          Focus: Clean cards/checklist for African professionals
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#EFE6D6] border-b border-[#E1D5C5]">
+        <div className="max-w-[1080px] mx-auto px-5">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-8">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2 block">
+                Target Alignment
               </span>
-            ))}
-          </div>
-
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#101040] leading-snug max-w-2xl">
-            Your salary isn't the problem. Depending on only one income source is the risk.
-          </h2>
-
-          <p className="mt-4 text-base text-[#4A4C78] max-w-3xl leading-relaxed">
-            Most people work hard every month, receive their salary, and immediately start calculating. Then the next month comes and the cycle begins again. The problem isn't that you're lazy or haven't worked hard enough.
-          </p>
-
-          <div className="mt-5 p-4 rounded-xl bg-[#F3F8FF] border-l-4 border-[#03037E] max-w-2xl">
-            <div className="text-lg md:text-xl font-bold text-[#03037E]">
-              What happens if that one income suddenly stops?
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#2B1B14]">
+                The Scorecard Is For You If...
+              </h2>
             </div>
-            <p className="mt-2 text-sm text-[#4A4C78] leading-relaxed">
-              If your job disappeared tomorrow, how long could you realistically survive? Would you have options — or would you be forced straight into survival mode? The Beyond Salary Scorecard™ helps you see the answer clearly.
-            </p>
-          </div>
-        </div>
-      </section>
 
-      {/* Does Any Of This Sound Familiar */}
-      <section className="py-14 md:py-18 bg-[#F3F8FF]">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-xl mb-8">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#00A3FF] mb-2">Self-Diagnostic</div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#101040]">Does any of this sound familiar?</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {familiarItems.map((item, idx) => (
-              <div 
-                key={idx} 
-                className="flex items-start gap-3 p-3.5 bg-white border border-[#E1E7F7] rounded-xl text-sm text-[#101040] hover:border-[#00A3FF]/40 transition-colors"
-              >
-                <div className="w-5 h-5 rounded-full bg-[#00A3FF] text-white flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
-                  ✓
+            <div className="space-y-3">
+              {whoItsFor.map((item, idx) => (
+                <div 
+                  key={idx}
+                  className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-xl p-4 md:p-4.5 flex items-start gap-3.5 shadow-2xs"
+                >
+                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#2B1B14] flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                    <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
+                  </div>
+                  <span className="text-sm md:text-base text-[#211A17] font-medium leading-snug">
+                    {item}
+                  </span>
                 </div>
-                <span className="leading-snug">{item}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 text-base md:text-lg font-bold text-[#03037E]">
-            If you nodded while reading this, this scorecard was created for you.
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 4 Pillars Section */}
-      <section className="py-14 md:py-18 bg-white">
+      {/* =========================================================================
+          SECTION 11: THIS MAY NOT BE FOR YOU IF...
+          Background: Warm Ivory #F8F4EC
+          Focus: Clear expectations, honest qualification, non-judgmental tone
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
+        <div className="max-w-[1080px] mx-auto px-5">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-8">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#5C514B] mb-2 block">
+                Honest Expectations
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#2B1B14]">
+                THIS MAY NOT BE FOR YOU IF...
+              </h2>
+              <div className="mt-3 space-y-2 text-sm md:text-base text-[#5C514B] leading-relaxed">
+                <p>
+                  The Beyond Salary Scorecard™ is designed for people who are ready to honestly assess where they are and take practical steps towards building more income options.
+                </p>
+                <p className="font-bold text-[#211A17]">
+                  This may not be the right place for you if you are:
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {notForYou.map((item, idx) => (
+                <div 
+                  key={idx}
+                  className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-xl p-4 md:p-4.5 flex items-start gap-3.5 shadow-2xs"
+                >
+                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#5C514B] flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                    ✕
+                  </div>
+                  <span className="text-sm md:text-base text-[#211A17] font-medium leading-snug">
+                    {item}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 p-6 rounded-2xl bg-[#FFFFFF] border border-[#E1D5C5] shadow-sm">
+              <p className="text-sm md:text-base text-[#2B1B14] leading-relaxed font-bold">
+                The Beyond Salary Movement is not about chasing every opportunity.
+              </p>
+              <p className="mt-2 text-sm md:text-base text-[#5C514B] leading-relaxed font-medium">
+                It is about gaining clarity, building practical skills, identifying opportunities and creating income options you can realistically grow alongside your current responsibilities.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 12: RESULT PREVIEW
+          Background: Warm Ivory #F8F4EC
+          Focus: 4 profiles with short preview to maintain curiosity
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
         <div className="max-w-[1080px] mx-auto px-5">
           <div className="max-w-2xl mb-10">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#00A3FF] mb-2">The Framework</div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#101040]">
-              Introducing the Beyond Salary Scorecard™
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2 block">
+              Result Profiles Preview
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14]">
+              By The End, You'll Know Exactly Where You Stand
             </h2>
-            <p className="mt-3 text-base text-[#4A4C78]">
-              A simple diagnostic to help you understand how vulnerable or prepared you currently are when it comes to your income. In less than 5 minutes, you'll discover:
+            <p className="mt-3 text-sm md:text-base text-[#5C514B] font-medium">
+              Your result will help you understand which stage best describes where you are today.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {pillars.map((pillar) => (
-              <div 
-                key={pillar.num}
-                className="bg-white border border-[#E1E7F7] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#03037E] text-white flex items-center justify-center font-bold text-sm mb-4">
-                  {pillar.num}
-                </div>
-                <h3 className="font-bold text-[#101040] text-base mb-2">{pillar.title}</h3>
-                <p className="text-xs md:text-sm text-[#4A4C78] leading-relaxed">{pillar.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Not another quiz callout */}
-      <section className="py-14 md:py-18 bg-[#F3F8FF] border-y border-[#E1E7F7]">
-        <div className="max-w-[720px] mx-auto px-5 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#101040]">
-            This is not another side hustle quiz.
-          </h2>
-          <p className="mt-4 text-base text-[#4A4C78] leading-relaxed">
-            The internet is full of opportunities — learn this, try that, trade this, sell that, use this AI tool. Many people become more confused than when they started.
-          </p>
-          <p className="mt-3 text-base text-[#4A4C78] leading-relaxed">
-            The Beyond Salary Scorecard™ is different. It doesn't tell you to jump into another opportunity — it helps you understand your current position first.
-          </p>
-          <p className="font-accent text-xl md:text-2xl text-[#03037E] mt-6">
-            "Because you can't create a clear plan if you don't know where you're starting from."
-          </p>
-        </div>
-      </section>
-
-      {/* Result Profiles Preview */}
-      <section className="py-14 md:py-18 bg-white">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-2xl mb-10">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#00A3FF] mb-2">Four Clear Profiles</div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#101040]">
-              By the end, you'll know exactly where you stand
-            </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {resultCards.map((card, idx) => (
               <div 
                 key={idx}
-                className="border border-[#E1E7F7] rounded-2xl p-5 bg-white hover:border-[#00A3FF]/50 transition-colors"
+                className="border border-[#E1D5C5] rounded-2xl p-5 bg-[#FFFFFF] shadow-2xs hover:border-[#C9A227] transition-colors flex flex-col justify-between"
               >
-                <span className="inline-block text-[11px] font-bold text-white bg-[#00A3FF] px-2.5 py-0.5 rounded-full mb-3">
-                  {card.tag}
-                </span>
-                <h3 className="font-bold text-[#101040] text-base mb-2">{card.title}</h3>
-                <p className="text-xs text-[#4A4C78] leading-relaxed">{card.desc}</p>
+                <div>
+                  <span className="inline-block text-[11px] font-bold text-[#F8F4EC] bg-[#2B1B14] px-2.5 py-0.5 rounded-full mb-3">
+                    {card.tag}
+                  </span>
+                  <h3 className="font-bold text-[#2B1B14] text-base mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="text-xs md:text-sm text-[#5C514B] leading-relaxed font-medium">
+                    {card.desc}
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-[#E1D5C5] text-[11px] font-bold text-[#C9A227]">
+                  Detailed breakdown in score report →
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Transformation Callout */}
-      <section className="py-10">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="bg-[#03037E] text-white rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
-            <div className="relative z-10">
-              <h2 
-                className="text-2xl sm:text-3xl md:text-4xl font-bold !text-[#FFBE4D] max-w-2xl leading-snug"
-                style={{ color: '#FFBE4D', fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
-              >
-                The goal isn't to panic. It's to build options before you desperately need them.
-              </h2>
-              <p className="mt-4 text-sm md:text-base text-[#C7CBF5] max-w-2xl leading-relaxed">
-                Your salary can be your foundation while you build something else. The goal is to stop letting one paycheck be the only thing standing between you and financial difficulty.
-              </p>
-
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
-                <div className="flex items-start gap-2.5 text-sm text-[#E7E9FB]">
-                  <span className="text-[#FFBE4D] font-bold text-lg leading-none">+</span>
-                  <span>You have a skill you can use to earn.</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-sm text-[#E7E9FB]">
-                  <span className="text-[#FFBE4D] font-bold text-lg leading-none">+</span>
-                  <span>You have another reliable way to create income.</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-sm text-[#E7E9FB]">
-                  <span className="text-[#FFBE4D] font-bold text-lg leading-none">+</span>
-                  <span>You're building an asset that belongs directly to you.</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-sm text-[#E7E9FB]">
-                  <span className="text-[#FFBE4D] font-bold text-lg leading-none">+</span>
-                  <span>You're no longer fully dependent on one employer's decision.</span>
-                </div>
-              </div>
-
-              <div className="mt-8 text-base font-bold text-[#FFBE4D]">
-                Not hype. Not overnight success. Building options.
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Who it's for */}
-      <section className="py-14 md:py-18 bg-[#F3F8FF]">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-2xl mx-auto bg-white border border-[#E1E7F7] rounded-2xl p-7 md:p-9 shadow-sm">
-            <h3 className="text-xl font-bold text-[#03037E] mb-5">
-              The scorecard is for you if...
-            </h3>
-            <ul className="space-y-3.5">
-              <li className="flex items-start gap-3 text-sm text-[#101040]">
-                <span className="text-[#00A3FF] font-bold text-base leading-none">✓</span>
-                <span>You're employed and want another income stream, without quitting.</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-[#101040]">
-                <span className="text-[#00A3FF] font-bold text-base leading-none">✓</span>
-                <span>You've recently experienced job uncertainty and want more financial runway.</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-[#101040]">
-                <span className="text-[#00A3FF] font-bold text-base leading-none">✓</span>
-                <span>You feel vulnerable depending on one salary every month.</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-[#101040]">
-                <span className="text-[#00A3FF] font-bold text-base leading-none">✓</span>
-                <span>You've tried side hustles before, but nothing has stuck consistently.</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-[#101040]">
-                <span className="text-[#00A3FF] font-bold text-base leading-none">✓</span>
-                <span>You want a real, sellable skill and a practical system you can build step-by-step.</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Steps */}
-      <section className="py-14 md:py-18 bg-white">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-xl mb-12">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#00A3FF] mb-2">Process</div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#101040]">
-              How the Beyond Salary Scorecard™ works
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step, idx) => (
-              <div key={idx} className="relative">
-                <div className="text-3xl font-extrabold text-[#00A3FF]/30 mb-2">
-                  {step.num}
-                </div>
-                <h3 className="text-base font-bold text-[#101040] mb-2">{step.title}</h3>
-                <p className="text-xs md:text-sm text-[#4A4C78] leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-16 bg-white">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="bg-gradient-to-b from-[#03037E] to-[#020254] text-white text-center rounded-3xl p-10 md:p-16 shadow-xl">
+      {/* =========================================================================
+          SECTION 13: FINAL CTA
+          Background: Rich Espresso Brown #2B1B14
+          Focus: Headline in Antique Gold #C9A227, Montserrat Bold, high contrast, decisive CTA
+      ========================================================================= */}
+      <section className="py-16 md:py-24 bg-[#2B1B14] text-[#F3EDE3]">
+        <div className="max-w-[1080px] mx-auto px-5 text-center">
+          <div className="max-w-2xl mx-auto">
             <h2 
-              className="text-2xl sm:text-3xl md:text-4xl font-bold !text-[#FFBE4D] max-w-xl mx-auto leading-snug"
-              style={{ color: '#FFBE4D', fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-bold text-[#C9A227] leading-tight"
+              style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
-              You can't change what you haven't clearly identified.
+              YOU CAN'T CHANGE WHAT YOU HAVEN'T CLEARLY IDENTIFIED.
             </h2>
-            <p className="mt-4 text-sm md:text-base text-[#C7CBF5] max-w-lg mx-auto leading-relaxed">
-              Right now, you may be more prepared than you think — or more vulnerable than you realise. There's only one way to find out.
-            </p>
+
+            <div className="mt-6 space-y-3 text-sm md:text-base text-[#F3EDE3] leading-relaxed max-w-xl mx-auto font-medium">
+              <p>Right now, you may be more prepared than you think.</p>
+              <p>Or you may be more financially vulnerable than you realise.</p>
+              <p className="text-[#F8F4EC] font-bold">There is only one way to find out.</p>
+              <p className="text-[#E1D5C5]">
+                Take the free Beyond Salary Scorecard™ and discover where you currently stand. Identify your biggest gap. See your next best move. And start building options beyond your salary.
+              </p>
+            </div>
+
             <div className="mt-8">
-              <button 
+              <button
                 onClick={onStart}
-                className="group inline-flex items-center gap-2 bg-[#FFBE4D] hover:bg-[#ffb336] text-[#03037E] font-bold text-base px-8 py-4 rounded-xl shadow-lg shadow-[#FFBE4D]/25 transition-all duration-200 active:scale-95"
+                className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base md:text-lg px-9 py-4 rounded-xl shadow-[0_12px_28px_-6px_rgba(201,162,39,0.45),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 cursor-pointer"
               >
-                <span>Take the Free Scorecard Now</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <span className="tracking-wide">DISCOVER MY BEYOND SALARY SCORE</span>
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
-            <div className="mt-4 text-xs text-[#AEB3E8]">
-              It's 100% free. Takes less than 5 minutes. Your result is personalised.
-            </div>
+
+            <p className="mt-4 text-xs text-[#EFE6D6] font-semibold">
+              Free • Approximately 5 minutes • Personalised to your answers
+            </p>
           </div>
         </div>
       </section>
+
     </div>
   );
 };

@@ -53,22 +53,22 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
   }, [selectedAnswer, onNext, onSelectOption]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-[#F8F4EC] text-[#211A17]">
       {/* Top sticky progress bar */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E1E7F7] px-5 py-4">
+      <div className="sticky top-0 z-40 bg-[#F8F4EC]/95 backdrop-blur-md border-b border-[#E1D5C5] px-5 py-4">
         <div className="max-w-[620px] mx-auto">
-          <div className="flex justify-between items-center text-xs sm:text-sm font-semibold text-[#03037E] mb-2.5">
+          <div className="flex justify-between items-center text-xs sm:text-sm font-semibold text-[#2B1B14] mb-2.5">
             <span className="font-bold">
-              Question {currentIndex + 1} <span className="text-[#8082AC] font-normal">of {questions.length}</span>
+              Question {currentIndex + 1} <span className="text-[#5C514B] font-normal">of {questions.length}</span>
             </span>
-            <span className="text-[#00A3FF] font-bold tracking-wide">
+            <span className="text-[#C9A227] font-bold tracking-wide">
               {currentQ.catLabel}
             </span>
           </div>
 
-          <div className="h-2 w-full bg-[#E1E7F7] rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-[#E1D5C5] rounded-full overflow-hidden">
             <div 
-              className="h-full bg-gradient-to-r from-[#03037E] to-[#00A3FF] transition-all duration-300 rounded-full"
+              className="h-full bg-gradient-to-r from-[#2B1B14] to-[#C9A227] transition-all duration-300 rounded-full"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -78,11 +78,11 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
       {/* Main Question Body */}
       <div className="flex-1 flex items-center justify-center px-5 py-8 md:py-14">
         <div className="w-full max-w-[620px] mx-auto">
-          <div className="text-xs font-bold uppercase tracking-wider text-[#00A3FF] mb-3">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3">
             Section {getSectionNum(currentQ.cat)} · {currentQ.catLabel}
           </div>
 
-          <h2 className="text-xl sm:text-2xl md:text-[1.65rem] font-bold text-[#101040] leading-snug mb-8">
+          <h2 className="text-xl sm:text-2xl md:text-[1.65rem] font-bold text-[#2B1B14] leading-snug mb-8">
             {currentQ.text}
           </h2>
 
@@ -96,17 +96,17 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                   key={optIdx}
                   type="button"
                   onClick={() => onSelectOption(optionNumber)}
-                  className={`group w-full flex items-center gap-4 p-4 md:p-5 rounded-2xl border-2 text-left transition-all duration-150 active:scale-[0.99] ${
+                  className={`group w-full flex items-center gap-4 p-4 md:p-5 rounded-2xl border-2 text-left transition-all duration-150 active:scale-[0.99] cursor-pointer ${
                     isSelected
-                      ? 'border-[#00A3FF] bg-[#F3F8FF] text-[#101040] shadow-sm'
-                      : 'border-[#E1E7F7] bg-white hover:border-[#00A3FF]/60 text-[#101040]'
+                      ? 'border-[#C9A227] bg-[#FFFFFF] text-[#2B1B14] shadow-sm ring-2 ring-[#C9A227]/20'
+                      : 'border-[#E1D5C5] bg-[#FFFFFF] hover:border-[#C9A227]/60 text-[#211A17]'
                   }`}
                 >
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-xs transition-colors ${
                       isSelected
-                        ? 'bg-[#00A3FF] text-white'
-                        : 'border-2 border-[#E1E7F7] text-[#4A4C78] group-hover:border-[#00A3FF]'
+                        ? 'bg-[#C9A227] text-[#2B1B14]'
+                        : 'border-2 border-[#E1D5C5] text-[#5C514B] group-hover:border-[#C9A227]'
                     }`}
                   >
                     {isSelected ? <Check className="w-4 h-4 stroke-[3]" /> : letters[optIdx]}
@@ -123,16 +123,16 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
       </div>
 
       {/* Bottom Navigation */}
-      <div className="sticky bottom-0 z-40 bg-white border-t border-[#E1E7F7] px-5 py-4">
+      <div className="sticky bottom-0 z-40 bg-[#F8F4EC] border-t border-[#E1D5C5] px-5 py-4">
         <div className="max-w-[620px] mx-auto flex items-center justify-between gap-4">
           <button
             type="button"
             onClick={onPrev}
             disabled={currentIndex === 0}
-            className={`flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-[#E1E7F7] font-bold text-sm text-[#4A4C78] transition-colors ${
+            className={`flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-[#E1D5C5] font-bold text-sm text-[#5C514B] transition-colors ${
               currentIndex === 0
                 ? 'opacity-40 cursor-not-allowed'
-                : 'hover:bg-[#F3F8FF] hover:text-[#03037E]'
+                : 'hover:bg-[#EFE6D6] hover:text-[#2B1B14] cursor-pointer'
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -143,10 +143,10 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
             type="button"
             onClick={onNext}
             disabled={selectedAnswer === null}
-            className={`flex-1 sm:flex-initial sm:min-w-[200px] flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm text-white transition-all shadow-md ${
+            className={`flex-1 sm:flex-initial sm:min-w-[200px] flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm transition-all shadow-md ${
               selectedAnswer === null
-                ? 'bg-[#8082AC] opacity-50 cursor-not-allowed'
-                : 'bg-[#03037E] hover:bg-[#020254] active:scale-95 shadow-[#03037E]/25'
+                ? 'bg-[#E1D5C5] text-[#5C514B] opacity-70 cursor-not-allowed'
+                : 'bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] active:scale-95 cursor-pointer'
             }`}
           >
             <span>{currentIndex === questions.length - 1 ? 'See My Result' : 'Continue'}</span>

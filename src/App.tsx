@@ -140,7 +140,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-[#4A4C78] selection:bg-[#00A3FF]/20 selection:text-[#03037E]">
+    <div className="min-h-screen flex flex-col bg-[#F8F4EC] text-[#211A17] selection:bg-[#C9A227]/30 selection:text-[#2B1B14]">
       {/* Persistent Nav on Landing, Results, and Welcome screens */}
       {['landing', 'welcome', 'results'].includes(currentScreen) && (
         <HeaderNav

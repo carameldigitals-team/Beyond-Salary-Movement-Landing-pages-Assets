@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --deep: #03037E;
-  --deep-dark: #020254;
-  --bright: #00A3FF;
-  --gold: #FFBE4D;
-  --white: #FFFFFF;
-  --ink: #101040;
-  --body: #4A4C78;
-  --panel: #F3F8FF;
-  --line: #E1E7F7;
-  --danger: #E0913A;
+  --primary-dark: #2B1B14;
+  --secondary-dark: #4A3026;
+  --gold-accent: #C9A227;
+  --gold-hover: #D4AF37;
+  --warm-ivory: #F8F4EC;
+  --soft-cream: #EFE6D6;
+  --card-white: #FFFFFF;
+  --text-primary: #211A17;
+  --text-secondary: #5C514B;
+  --border-beige: #E1D5C5;
   --max: 1080px;
 }
 
@@ -18,22 +18,22 @@
   body {
     margin: 0;
     font-family: 'Montserrat', sans-serif;
-    color: var(--body);
-    background: var(--white);
+    color: #211A17;
+    background: #F8F4EC;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Montserrat', sans-serif;
-    color: var(--ink);
+    color: #2B1B14;
     letter-spacing: -0.01em;
   }
 }
 
 .font-accent {
-  font-family: 'Pacifico', cursive;
-  font-weight: 400;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
 }
 
 @keyframes spinSlow {
@@ -43,4 +43,39 @@
 
 .animate-spin-slow {
   animation: spinSlow 12s linear infinite;
+}
+
+@keyframes shimmerOnce {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-gold-text {
+  background: linear-gradient(
+    90deg,
+    #C9A227 0%,
+    #C9A227 30%,
+    #FFF6D1 50%,
+    #C9A227 70%,
+    #C9A227 100%
+  );
+  background-size: 250% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerOnce 1s ease-out 1.1s 1 normal forwards;
+  filter: drop-shadow(0 0 6px rgba(201, 162, 39, 0.4));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-gold-text {
+    animation: none;
+    -webkit-text-fill-color: #C9A227;
+    background: none;
+    filter: none;
+  }
 }
