@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { ResilientArchitectureIcons } from './ResilientArchitectureIcons';
 import { SalaryDrainCategories } from './SalaryDrainCategories';
+import { IncomeOpportunityFinder } from './IncomeOpportunityFinder';
 
 interface LandingViewProps {
   onStart: () => void;
@@ -35,12 +36,12 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
   ];
 
   const benefits = [
-    'How dependent you currently are on one income source',
-    'Your current financial safety level and runway',
-    'Your income and skill readiness',
+    'How dependent you are on your current salary',
+    'Where your financial safety gap may be',
+    'How ready you are to build an additional income stream',
+    'What may be holding you back',
     'Your biggest Beyond Salary bottleneck',
-    'The hidden gaps keeping you stuck in the monthly cycle',
-    'Your personalised next step to build options safely'
+    'The practical next step you should consider'
   ];
 
   const resultCards = [
@@ -550,6 +551,13 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
       </section>
 
       {/* =========================================================================
+          QUICK WIN: THE 10-MINUTE INCOME OPPORTUNITY FINDER™
+          Background: Warm Ivory #F8F4EC
+          Includes: 4 Steps, Interactive Challenge Card, Micro-Win & Transition
+      ========================================================================= */}
+      <IncomeOpportunityFinder onTakeScorecard={onStart} />
+
+      {/* =========================================================================
           SECTION 6: INTRODUCE THE BEYOND SALARY SCORECARD™ (FIRST MAJOR CTA)
           Background: Rich Espresso Brown #2B1B14
           Focus: High-impact dark luxury presentation, Antique Gold CTA
@@ -564,18 +572,15 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
               </span>
 
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#F8F4EC] leading-tight">
-                THAT IS EXACTLY WHY WE CREATED
-                <span className="block mt-1 text-[#EFE6D6]">THE BEYOND SALARY SCORECARD™</span>
+                THE BEYOND SALARY SCORECARD™
+                <span className="block mt-1 text-[#EFE6D6]">WILL HELP YOU SEE THE BIGGER PICTURE.</span>
               </h2>
 
               <p className="mt-4 text-base md:text-lg text-[#F3EDE3] leading-relaxed">
-                A free 5-minute assessment designed to help you understand where you currently stand and identify your clearest next step towards building income beyond your salary.
+                In about 5 minutes, discover:
               </p>
 
               <div className="mt-6">
-                <div className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3">
-                  In 5 minutes, you will discover:
-                </div>
                 <div className="space-y-2.5">
                   {benefits.map((benefit, idx) => (
                     <div key={idx} className="flex items-start gap-3 bg-[#FFFFFF] p-3 rounded-xl border border-[#E1D5C5] shadow-2xs">
@@ -616,11 +621,11 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
                   whileTap={{ scale: 0.97 }}
                   className="group flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-8 py-4 rounded-xl w-full sm:w-auto cursor-pointer select-none origin-center"
                 >
-                  <span className="tracking-wide">DISCOVER MY BEYOND SALARY SCORE</span>
+                  <span className="tracking-wide">TAKE THE FREE BEYOND SALARY SCORECARD™</span>
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </motion.button>
                 <p className="mt-3 text-xs text-[#EFE6D6] font-medium">
-                  Free • Takes approximately 5 minutes • Personalised to your answers
+                  It takes approximately 5 minutes.
                 </p>
               </div>
             </div>
