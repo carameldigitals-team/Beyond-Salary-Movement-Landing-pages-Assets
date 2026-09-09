@@ -12,6 +12,7 @@ import {
   Check,
   RotateCcw
 } from 'lucide-react';
+import { MonetizationLawVisual } from './MonetizationLawVisual';
 
 interface IncomeOpportunityFinderProps {
   onTakeScorecard: () => void;
@@ -268,19 +269,8 @@ export const IncomeOpportunityFinder: React.FC<IncomeOpportunityFinderProps> = (
                 ))}
               </div>
 
-              {/* HIGHLIGHTED HERO STATEMENT (One of the strongest visual moments) */}
-              <div className="mt-8 relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#2B1B14] via-[#4A3026] to-[#2B1B14] p-7 sm:p-8 text-center text-[#F8F4EC] border-2 border-[#C9A227] shadow-lg">
-                <div className="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-28 h-28 bg-[#C9A227]/10 rounded-full blur-xl pointer-events-none" />
-                <div className="relative z-10 max-w-xl mx-auto space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#DFB943] block">
-                    The Fundamental Law of Monetization
-                  </span>
-                  <p className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#F8F4EC] tracking-tight leading-tight uppercase">
-                    DON&apos;T JUST SELL THE SKILL.
-                    <span className="block text-[#DFB943] mt-1">SELL THE PROBLEM YOU CAN SOLVE.</span>
-                  </p>
-                </div>
-              </div>
+              {/* HIGHLIGHTED VISUAL STORYTELLING: THE FUNDAMENTAL LAW OF MONETIZATION */}
+              <MonetizationLawVisual />
             </div>
 
             {/* -------------------------------------------------------------
