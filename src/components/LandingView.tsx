@@ -5,11 +5,17 @@ import {
   ChevronDown,
   Sparkles, 
   Check,
-  HelpCircle
+  HelpCircle,
+  ShieldCheck,
+  Clock,
+  Lock
 } from 'lucide-react';
 import { ResilientArchitectureIcons } from './ResilientArchitectureIcons';
 import { SalaryDrainCategories } from './SalaryDrainCategories';
 import { IncomeOpportunityFinder } from './IncomeOpportunityFinder';
+import { SocialProofSection } from './SocialProofSection';
+import { FaqSection } from './FaqSection';
+import { StickyScorecardBar } from './StickyScorecardBar';
 
 interface LandingViewProps {
   onStart: () => void;
@@ -226,15 +232,48 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
                 </p>
               </div>
 
-              {/* Primary CTA Button: Subtle Scroll Down */}
-              <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <button
-                  onClick={scrollToReality}
-                  className="group flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-8 py-4 rounded-xl shadow-[0_10px_25px_-5px_rgba(201,162,39,0.38),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 w-full sm:w-auto cursor-pointer"
-                >
-                  <span className="tracking-wide">SEE IF THIS SOUNDS LIKE YOU</span>
-                  <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-1" />
-                </button>
+              {/* Primary CTA Buttons & Trust Signals */}
+              <div className="mt-8 space-y-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+                  <button
+                    onClick={onStart}
+                    className="group flex items-center justify-center gap-3 bg-gradient-to-r from-[#DFB943] via-[#C9A227] to-[#B88E18] hover:from-[#E8C654] hover:to-[#C9A227] text-[#2B1B14] font-bold text-base px-8 py-4 rounded-xl shadow-[0_10px_25px_-5px_rgba(201,162,39,0.38),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-200 active:scale-98 cursor-pointer"
+                  >
+                    <span className="tracking-wide">START FREE SCORECARD</span>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </button>
+
+                  <button
+                    onClick={scrollToReality}
+                    className="flex items-center justify-center gap-2 bg-[#38241B] hover:bg-[#452D22] text-[#EFE6D6] font-semibold text-sm px-6 py-4 rounded-xl border border-[#C9A227]/30 transition-all cursor-pointer"
+                  >
+                    <span>Read The Story</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Trust Badges */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-[#E1D5C5] font-medium pt-1">
+                  <span className="inline-flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#C9A227]" />
+                    100% Free
+                  </span>
+                  <span>•</span>
+                  <span className="inline-flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-[#C9A227]" />
+                    ~5 Minutes
+                  </span>
+                  <span>•</span>
+                  <span className="inline-flex items-center gap-1">
+                    <Lock className="w-3.5 h-3.5 text-[#C9A227]" />
+                    100% Confidential
+                  </span>
+                  <span>•</span>
+                  <span className="inline-flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+                    Instant Result
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -707,72 +746,82 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
       </section>
 
       {/* =========================================================================
-          SECTION 7: CORE BRAND BELIEF
-          Background: Warm Ivory #F8F4EC
-          Focus: Your salary is not the problem, having no options is
+          SECTION 7 & 8: CORE BRAND MANIFESTO & PHILOSOPHY
+          Background: Rich Espresso Brown #2B1B14
+          Focus: High-impact unified statement, Antique Gold accents, 4 Option Pillars
       ========================================================================= */}
-      <section className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
+      <section className="py-16 md:py-24 bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026]">
         <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-3 block">
-              Core Brand Philosophy
+          <div className="max-w-3xl mx-auto text-center">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#DFB943] mb-3 block">
+              The Beyond Salary Manifesto
             </span>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14] leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#F8F4EC] leading-tight">
               YOUR SALARY IS NOT THE PROBLEM.
-              <span className="block mt-1 text-[#5C514B]">THE PROBLEM IS HAVING NO OPTIONS BEYOND IT.</span>
+              <span className="block mt-1 text-[#DFB943]">THE PROBLEM IS HAVING NO OPTIONS BEYOND IT.</span>
             </h2>
 
-            <div className="mt-6 space-y-4 text-base md:text-lg text-[#211A17] leading-relaxed">
-              <p>You do not have to quit your job.</p>
-              <p>Your salary can be your foundation while you build something else.</p>
-              <p>The goal is not to replace your salary overnight, nor to chase every opportunity online.</p>
+            <div className="mt-6 p-6 sm:p-7 rounded-2xl bg-[#38241B] border border-[#C9A227]/40 shadow-md my-8">
+              <p 
+                className="text-xl sm:text-2xl md:text-3xl font-bold text-[#DFB943] leading-snug italic"
+                style={{ fontFamily: "'Montserrat', sans-serif" }}
+              >
+                "The goal isn't to panic. It's to build options before you desperately need them."
+              </p>
+              <p className="mt-3 text-xs sm:text-sm text-[#EFE6D6] font-medium">
+                Not hype. Not overnight promises. Grounded, practical skill and system building.
+              </p>
             </div>
 
-            <div className="mt-8 p-6 rounded-2xl bg-[#FFFFFF] border border-[#E1D5C5] shadow-sm">
-              <h3 className="text-base font-bold uppercase tracking-wide text-[#2B1B14] mb-3">
-                The Real Goal is to Build Options:
+            <div className="text-left bg-[#FFFFFF] text-[#211A17] rounded-2xl p-6 sm:p-7 border border-[#E1D5C5] shadow-lg">
+              <h3 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#2B1B14] mb-4 pb-3 border-b border-[#E1D5C5] flex items-center justify-between">
+                <span>The 4 Pillars of Resilient Options:</span>
+                <span className="text-xs font-medium text-[#5C514B]">What we help you build</span>
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm md:text-base text-[#211A17]">
-                <div className="flex items-center gap-2.5 font-medium">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A227]"></div>
-                  <span>A practical, high-value skill</span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm md:text-base">
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#2B1B14] flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                    <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
+                  </div>
+                  <div>
+                    <strong className="text-[#2B1B14] block">A High-Value Marketable Skill:</strong>
+                    <span className="text-xs text-[#5C514B]">Monetizing expertise you already possess.</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2.5 font-medium">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A227]"></div>
-                  <span>A reliable operating system</span>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#2B1B14] flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                    <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
+                  </div>
+                  <div>
+                    <strong className="text-[#2B1B14] block">A Repeatable Operating System:</strong>
+                    <span className="text-xs text-[#5C514B]">Predictable delivery that doesn't burn you out.</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2.5 font-medium">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A227]"></div>
-                  <span>Another consistent way to create income</span>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#2B1B14] flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                    <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
+                  </div>
+                  <div>
+                    <strong className="text-[#2B1B14] block">A 3–6 Month Safety Runway:</strong>
+                    <span className="text-xs text-[#5C514B]">A financial buffer so you never panic.</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2.5 font-medium">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A227]"></div>
-                  <span>More control over your personal future</span>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#2B1B14] flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                    <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
+                  </div>
+                  <div>
+                    <strong className="text-[#2B1B14] block">Professional Sovereignty:</strong>
+                    <span className="text-xs text-[#5C514B]">Never having to negotiate from fear.</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 8: KEY BRAND STATEMENT
-          Background: Rich Espresso Brown #2B1B14
-          Focus: Prominent statement in Antique Gold #C9A227, Montserrat Bold, high contrast
-      ========================================================================= */}
-      <section className="py-14 md:py-20 bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026]">
-        <div className="max-w-[1080px] mx-auto px-5 text-center">
-          <div className="max-w-3xl mx-auto">
-            <h2 
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-bold text-[#C9A227] leading-snug"
-              style={{ fontFamily: "'Montserrat', sans-serif" }}
-            >
-              "The goal isn't to panic. It's to build options before you desperately need them."
-            </h2>
-            <p className="mt-5 text-sm md:text-base text-[#EFE6D6] max-w-xl mx-auto leading-relaxed font-medium">
-              Not hype. Not overnight promises. Grounded, practical skill and system building.
-            </p>
           </div>
         </div>
       </section>
@@ -848,89 +897,97 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
       </section>
 
       {/* =========================================================================
-          SECTION 10: THIS IS FOR YOU IF
+          SECTION 10: EXECUTIVE FIT MATRIX (WHO IT IS FOR VS WHO IT IS NOT FOR)
           Background: Soft Cream #EFE6D6
-          Focus: Clean cards/checklist for African professionals
+          Focus: High-impact 2-column comparison, scannable, eliminates mobile scroll fatigue
       ========================================================================= */}
       <section className="py-16 md:py-24 bg-[#EFE6D6] border-b border-[#E1D5C5]">
         <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-2xl mx-auto">
-            <div className="text-center mb-8">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2 block">
-                Target Alignment
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#2B1B14]">
-                The Scorecard Is For You If...
-              </h2>
-            </div>
-
-            <div className="space-y-3">
-              {whoItsFor.map((item, idx) => (
-                <div 
-                  key={idx}
-                  className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-xl p-4 md:p-4.5 flex items-start gap-3.5 shadow-2xs"
-                >
-                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#2B1B14] flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
-                    <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
-                  </div>
-                  <span className="text-sm md:text-base text-[#211A17] font-medium leading-snug">
-                    {item}
-                  </span>
-                </div>
-              ))}
-            </div>
+          <div className="max-w-2xl mx-auto text-center mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2 block">
+              Honest Qualification
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2B1B14] leading-tight">
+              IS THE BEYOND SALARY SCORECARD™ RIGHT FOR YOU?
+            </h2>
+            <p className="mt-3 text-sm md:text-base text-[#5C514B] font-medium">
+              We built this for professionals ready to build real assets, not those looking for overnight shortcuts.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* =========================================================================
-          SECTION 11: THIS MAY NOT BE FOR YOU IF...
-          Background: Warm Ivory #F8F4EC
-          Focus: Clear expectations, honest qualification, non-judgmental tone
-      ========================================================================= */}
-      <section className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-2xl mx-auto">
-            <div className="text-center mb-8">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#5C514B] mb-2 block">
-                Honest Expectations
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#2B1B14]">
-                THIS MAY NOT BE FOR YOU IF...
-              </h2>
-              <div className="mt-3 space-y-2 text-sm md:text-base text-[#5C514B] leading-relaxed">
-                <p>
-                  The Beyond Salary Scorecard™ is designed for people who are ready to honestly assess where they are and take practical steps towards building more income options.
-                </p>
-                <p className="font-bold text-[#211A17]">
-                  This may not be the right place for you if you are:
-                </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+            {/* Column 1: Built Specifically For You */}
+            <div className="bg-[#FFFFFF] border-2 border-[#2E6F40]/30 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-3 pb-4 border-b border-[#E1D5C5] mb-5">
+                  <div className="w-9 h-9 rounded-xl bg-[#2E6F40]/10 flex items-center justify-center text-[#2E6F40]">
+                    <Check className="w-5 h-5 stroke-[3]" />
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-[#2B1B14]">
+                      This Is Built For You If:
+                    </h3>
+                    <p className="text-xs text-[#5C514B]">
+                      High alignment with sustainable option-building
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {whoItsFor.map((item, idx) => (
+                    <div 
+                      key={idx}
+                      className="flex items-start gap-3 text-xs sm:text-sm text-[#211A17] font-medium leading-relaxed"
+                    >
+                      <div className="w-5 h-5 rounded-full bg-[#EAF5ED] text-[#2E6F40] flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-[#E1D5C5] text-xs font-bold text-[#2E6F40] flex items-center gap-2">
+                <span>✓ Perfect fit for the 5-minute diagnostic</span>
               </div>
             </div>
 
-            <div className="space-y-3">
-              {notForYou.map((item, idx) => (
-                <div 
-                  key={idx}
-                  className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-xl p-4 md:p-4.5 flex items-start gap-3.5 shadow-2xs"
-                >
-                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#5C514B] flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+            {/* Column 2: Respectfully Not For You */}
+            <div className="bg-[#F8F4EC] border border-[#E1D5C5] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-3 pb-4 border-b border-[#E1D5C5] mb-5">
+                  <div className="w-9 h-9 rounded-xl bg-[#8B3E1E]/10 flex items-center justify-center text-[#8B3E1E] font-bold">
                     ✕
                   </div>
-                  <span className="text-sm md:text-base text-[#211A17] font-medium leading-snug">
-                    {item}
-                  </span>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-[#2B1B14]">
+                      This May Not Be For You If:
+                    </h3>
+                    <p className="text-xs text-[#5C514B]">
+                      Honest expectations to protect your time
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
 
-            <div className="mt-8 p-6 rounded-2xl bg-[#FFFFFF] border border-[#E1D5C5] shadow-sm">
-              <p className="text-sm md:text-base text-[#2B1B14] leading-relaxed font-bold">
-                The Beyond Salary Movement is not about chasing every opportunity.
-              </p>
-              <p className="mt-2 text-sm md:text-base text-[#5C514B] leading-relaxed font-medium">
-                It is about gaining clarity, building practical skills, identifying opportunities and creating income options you can realistically grow alongside your current responsibilities.
-              </p>
+                <div className="space-y-3">
+                  {notForYou.map((item, idx) => (
+                    <div 
+                      key={idx}
+                      className="flex items-start gap-3 text-xs sm:text-sm text-[#5C514B] font-medium leading-relaxed"
+                    >
+                      <div className="w-5 h-5 rounded-full bg-[#F3EDE3] text-[#8B3E1E] flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                        ✕
+                      </div>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-[#E1D5C5] text-xs text-[#5C514B] font-medium">
+                The Beyond Salary Movement is grounded in practical systems, not hype.
+              </div>
             </div>
           </div>
         </div>
@@ -980,6 +1037,20 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
           </div>
         </div>
       </section>
+
+      {/* =========================================================================
+          SOCIAL PROOF: VOICES OF AFRICAN PROFESSIONALS
+          Background: Pure White #FFFFFF
+          Focus: High-credibility authentic case reflections & 5-star ratings
+      ========================================================================= */}
+      <SocialProofSection />
+
+      {/* =========================================================================
+          FAQ SECTION: FREQUENTLY ASKED QUESTIONS
+          Background: Warm Ivory #F8F4EC
+          Focus: Accordion objection busters (job safety, privacy, cost, time)
+      ========================================================================= */}
+      <FaqSection />
 
       {/* =========================================================================
           SECTION 13: FINAL CTA
@@ -1041,6 +1112,9 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
           </div>
         </div>
       </section>
+
+      {/* Floating Sticky Bar on deep scroll */}
+      <StickyScorecardBar onStart={onStart} />
 
     </div>
   );

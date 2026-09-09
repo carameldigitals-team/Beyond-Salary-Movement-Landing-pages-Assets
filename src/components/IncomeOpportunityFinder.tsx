@@ -449,8 +449,53 @@ export const IncomeOpportunityFinder: React.FC<IncomeOpportunityFinderProps> = (
                 </div>
               </div>
 
+              {/* Quick-Fill Interactive Presets */}
+              <div className="mt-6 p-3.5 rounded-2xl bg-[#F8F4EC] border border-[#E1D5C5] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <span className="text-xs font-bold text-[#2B1B14] shrink-0">
+                  Tap to try a sample scenario:
+                </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSkill('Canva & Social Design');
+                      setProblem('Inconsistent social media posts & poor brand visuals');
+                      setPerson('Local business owners & independent coaches');
+                      setOffer('12 custom branded posts every month with captions for $150');
+                    }}
+                    className="text-[11px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#EFE6D6] border border-[#E1D5C5] text-[#2B1B14] transition-all cursor-pointer shadow-2xs"
+                  >
+                    🎨 Graphic Design
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSkill('Advanced Excel & Accounting');
+                      setProblem('Messy financial records & no cash flow visibility');
+                      setPerson('Founders of growing e-commerce & retail shops');
+                      setOffer('Monthly automated profit & cash-flow dashboard for $200/mo');
+                    }}
+                    className="text-[11px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#EFE6D6] border border-[#E1D5C5] text-[#2B1B14] transition-all cursor-pointer shadow-2xs"
+                  >
+                    📊 Excel & Finance
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSkill('Professional Writing & Editing');
+                      setProblem('Lack of time to write weekly client newsletters');
+                      setPerson('B2B consultants, real estate agents & law firms');
+                      setOffer('4 thought-leadership articles & weekly email newsletters for $250/mo');
+                    }}
+                    className="text-[11px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#EFE6D6] border border-[#E1D5C5] text-[#2B1B14] transition-all cursor-pointer shadow-2xs"
+                  >
+                    ✍️ Writing & Content
+                  </button>
+                </div>
+              </div>
+
               {/* 4 Form Fields */}
-              <div className="mt-8 space-y-5">
+              <div className="mt-6 space-y-5">
                 {/* Field 1 */}
                 <div>
                   <label htmlFor="challenge-skill" className="block text-sm font-bold text-[#2B1B14] mb-1.5 flex items-center justify-between">
