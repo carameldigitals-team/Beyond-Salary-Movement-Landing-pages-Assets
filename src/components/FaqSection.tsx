@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChevronDown, HelpCircle, ShieldCheck } from 'lucide-react';
 
 interface FaqItem {
@@ -7,7 +7,11 @@ interface FaqItem {
 }
 
 export const FaqSection: React.FC = () => {
+  // Controlled accordion state: only one open at a time
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  // Ref to prevent double-firing of touch and click events on mobile devices
+  const lastClickRef = useRef<{ index: number; time: number }>({ index: -1, time: 0 });
 
   const faqs: FaqItem[] = [
     {
@@ -42,12 +46,22 @@ export const FaqSection: React.FC = () => {
     },
   ];
 
-  const toggle = (idx: number) => {
-    setOpenIndex(openIndex === idx ? null : idx);
+  // Robust persistent toggle handler
+  const handleToggle = (idx: number, e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
+    // Guard against rapid duplicate clicks/taps on the same item within 350ms
+    const now = Date.now();
+    if (lastClickRef.current.index === idx && now - lastClickRef.current.time < 350) {
+      return;
+    }
+    lastClickRef.current = { index: idx, time: now };
+
+    setOpenIndex((prev) => (prev === idx ? null : idx));
   };
 
   return (
-    <section className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]">
+    <section className="py-16 md:py-24 bg-[#F8F4EC] border-b border-[#E1D5C5]" id="faq-section">
       <div className="max-w-[1080px] mx-auto px-5">
         <div className="max-w-2xl mx-auto text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-[#FFFFFF] px-3.5 py-1.5 rounded-full mb-3 border border-[#E1D5C5] shadow-2xs">
@@ -71,7 +85,7 @@ export const FaqSection: React.FC = () => {
             return (
               <div
                 key={idx}
-                className={`rounded-2xl border transition-all duration-200 bg-[#FFFFFF] overflow-hidden ${
+                className={`rounded-2xl border transition-colors duration-250 bg-[#FFFFFF] overflow-hidden ${
                   isOpen
                     ? 'border-[#C9A227] shadow-sm'
                     : 'border-[#E1D5C5] hover:border-[#C9A227]/60'
@@ -79,15 +93,17 @@ export const FaqSection: React.FC = () => {
               >
                 <button
                   type="button"
-                  onClick={() => toggle(idx)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer select-none"
+                  id={`faq-btn-${idx}`}
+                  onClick={(e) => handleToggle(idx, e)}
                   aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${idx}`}
+                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer select-none touch-manipulation focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#C9A227] rounded-2xl"
                 >
                   <span className="text-sm sm:text-base font-bold text-[#2B1B14] leading-snug">
                     {faq.question}
                   </span>
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ease-out ${
                       isOpen
                         ? 'bg-[#2B1B14] text-[#DFB943] rotate-180'
                         : 'bg-[#F8F4EC] text-[#5C514B]'
@@ -97,11 +113,24 @@ export const FaqSection: React.FC = () => {
                   </div>
                 </button>
 
-                {isOpen && (
-                  <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-[#E1D5C5]/60 text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
-                    <p className="mt-3">{faq.answer}</p>
+                {/* Persistent CSS Grid Accordion Container */}
+                <div
+                  id={`faq-answer-${idx}`}
+                  role="region"
+                  aria-labelledby={`faq-btn-${idx}`}
+                  className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                  style={{
+                    willChange: 'grid-template-rows, opacity',
+                  }}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-[#E1D5C5]/60 text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
+                      <p className="mt-3">{faq.answer}</p>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
