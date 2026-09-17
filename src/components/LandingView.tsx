@@ -123,77 +123,67 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
           Background: Rich Espresso Brown #2B1B14
           Focus: High contrast, warm dark luxury, empathy, no premature quiz CTA
       ========================================================================= */}
-      <section className="pt-12 pb-16 md:pt-16 md:pb-24 bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026]">
+      <section className="pt-10 pb-16 md:pt-14 md:pb-24 bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026]">
         <div className="max-w-[1080px] mx-auto px-5">
+          {/* Centralized Target Audience Callout Badge */}
+          <div className="flex justify-center mb-8 md:mb-10 text-center">
+            <motion.div
+              initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
+              className="inline-flex flex-wrap sm:flex-nowrap items-center justify-center gap-x-2 gap-y-1.5 text-xs md:text-sm font-semibold bg-[#38231A] border border-[#C9A227]/40 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl sm:rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.4)] max-w-full text-center"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#C9A227] shadow-[0_0_6px_#C9A227] shrink-0" />
+              <span className="tracking-wider uppercase text-[11px] sm:text-xs font-semibold text-[#F8F4EC]">
+                FOR AFRICAN PROFESSIONALS WITH A 9–5 WHO WANT TO BUILD INCOME OPTIONS
+              </span>
+              <motion.span
+                initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
+                animate={
+                  shouldReduceMotion
+                    ? { scale: 1, opacity: 1 }
+                    : {
+                        scale: [0.5, 1.25, 0.94, 1.06, 1],
+                        opacity: [0, 1, 1, 1, 1],
+                      }
+                }
+                transition={{
+                  duration: 0.9,
+                  delay: 0.55,
+                  times: [0, 0.45, 0.7, 0.88, 1],
+                  ease: "easeOut",
+                }}
+                className="inline-flex items-center origin-center shrink-0"
+              >
+                <motion.span
+                  animate={
+                    shouldReduceMotion
+                      ? { scale: 1 }
+                      : {
+                          scale: [1, 1.07, 1],
+                        }
+                  }
+                  transition={{
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    duration: 2.4,
+                    delay: 1.6,
+                    ease: "easeInOut",
+                  }}
+                  className="inline-flex items-center gap-1 font-bold text-[11px] sm:text-xs tracking-wider uppercase text-[#C9A227] whitespace-nowrap"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#C9A227] shrink-0 inline-block drop-shadow-[0_0_6px_rgba(201,162,39,0.7)]" />
+                  <span className="shimmer-gold-text">
+                    BEYOND SALARY
+                  </span>
+                </motion.span>
+              </motion.span>
+            </motion.div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             
             <div className="lg:col-span-7">
-              {/* Eyebrow with Premium Subtle Sequence Animation */}
-              <div className="flex items-center gap-3 mb-6">
-                {/* 1 & 2: Thin Antique Gold line #C9A227 expanding smoothly into place */}
-                <motion.div
-                  initial={shouldReduceMotion ? { width: 32, opacity: 1 } : { width: 0, opacity: 0 }}
-                  animate={{ width: 32, opacity: 1 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="h-[2px] bg-[#C9A227] rounded-full shrink-0 shadow-[0_0_8px_rgba(201,162,39,0.4)]"
-                  aria-hidden="true"
-                />
-
-                {/* 3 & 4: Eyebrow badge container with soft drop shadow and fade/upward motion */}
-                <motion.div
-                  initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
-                  className="inline-flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs md:text-sm font-semibold bg-[#38231A] border border-[#C9A227]/40 px-3.5 sm:px-4 py-2 rounded-2xl sm:rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.4)] max-w-full"
-                >
-                  <span className="w-2 h-2 rounded-full bg-[#C9A227] shadow-[0_0_6px_#C9A227] shrink-0" />
-                  <span className="tracking-wider uppercase text-[11px] md:text-xs font-semibold text-[#F8F4EC]">
-                    FOR AFRICAN PROFESSIONALS WITH A 9–5 WHO WANT TO BUILD INCOME OPTIONS
-                  </span>
-                  <motion.span
-                    initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
-                    animate={
-                      shouldReduceMotion
-                        ? { scale: 1, opacity: 1 }
-                        : {
-                            scale: [0.5, 1.25, 0.94, 1.06, 1],
-                            opacity: [0, 1, 1, 1, 1],
-                          }
-                    }
-                    transition={{
-                      duration: 0.9,
-                      delay: 0.55,
-                      times: [0, 0.45, 0.7, 0.88, 1],
-                      ease: "easeOut",
-                    }}
-                    className="inline-flex items-center origin-center"
-                  >
-                    <motion.span
-                      animate={
-                        shouldReduceMotion
-                          ? { scale: 1 }
-                          : {
-                              scale: [1, 1.07, 1],
-                            }
-                      }
-                      transition={{
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        duration: 2.4,
-                        delay: 1.6,
-                        ease: "easeInOut",
-                      }}
-                      className="inline-flex items-center gap-1 font-bold text-[11px] md:text-xs tracking-wider uppercase text-[#C9A227]"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 text-[#C9A227] shrink-0 inline-block drop-shadow-[0_0_6px_rgba(201,162,39,0.7)]" />
-                      <span className="shimmer-gold-text">
-                        BEYOND SALARY
-                      </span>
-                    </motion.span>
-                  </motion.span>
-                </motion.div>
-              </div>
-
               {/* Main Headline */}
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.1rem] font-bold text-[#F8F4EC] leading-[1.15] tracking-tight">
                 YOU'VE DONE EVERYTHING RIGHT.
