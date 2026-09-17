@@ -311,7 +311,7 @@ export const RESULT_CATEGORIES: Record<string, ResultProfile> = {
   stuck: {
     min: 60,
     max: 79,
-    name: 'The Ready But Stuck',
+    name: 'Ready but Stuck',
     sub: 'You are closer than you think, but you may be struggling to turn what you know into income.',
     body: 'You already understand the importance of building additional income, and may already be learning or have learned a skill. But knowledge alone does not automatically create income. Your biggest opportunity is likely moving from learning to executing — building practical experience, creating proof of your skills, and finding your first client.',
     priorities: [

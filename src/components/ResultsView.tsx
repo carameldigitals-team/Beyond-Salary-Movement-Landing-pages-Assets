@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { LeadData, SurvivalCalc, CategoryId } from '../types';
 import { 
-  RESULT_CATEGORIES, 
-  BOTTLENECKS, 
-  PATHWAYS 
-} from '../data/scorecardData';
+  AssessmentResult, 
+  LeadData, 
+  SurvivalCalc 
+} from '../types';
+import { 
+  CDA_BRAND_CONFIG, 
+  CDA_PROFILES, 
+  CDA_OFFERS, 
+  CDA_BOTTLENECKS 
+} from '../data/cdaConfig';
+import { getDimensionRating } from '../utils/scoringEngine';
+import { trackEvent } from '../utils/analytics';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -13,53 +20,78 @@ import {
   Printer, 
   Check, 
   ShieldAlert, 
+  Layers,
+  BookOpen,
+  CheckCircle2,
+  ExternalLink,
+  MessageCircle,
+  HelpCircle,
+  Info,
+  CreditCard,
+  Zap,
+  Target,
+  AlertTriangle,
   Lightbulb,
-  Award
+  Compass,
+  Milestone,
+  Clock,
+  ShieldCheck,
+  Building2
 } from 'lucide-react';
 
 interface ResultsViewProps {
-  totalScore: number;
-  categoryPercentages: Record<CategoryId, number>;
-  bottleneckCategory: CategoryId;
-  resultKey: string;
+  assessmentResult: AssessmentResult;
   leadData: LeadData;
   survivalData: SurvivalCalc | null;
   onRetake: () => void;
 }
 
 export const ResultsView: React.FC<ResultsViewProps> = ({
-  totalScore,
-  categoryPercentages,
-  bottleneckCategory,
-  resultKey,
+  assessmentResult,
   leadData,
   survivalData,
   onRetake
 }) => {
-  const result = RESULT_CATEGORIES[resultKey] || RESULT_CATEGORIES.survivor;
-  const bottleneck = BOTTLENECKS[bottleneckCategory] || BOTTLENECKS.dependency;
+  const profile = CDA_PROFILES[assessmentResult.profile] || CDA_PROFILES.salary_survivor;
+  // Core strategic shift: All profiles converge into the ₦10,999 Beyond Salary Clarity & Foundation Cohort
+  const offer = CDA_OFFERS.tier_1;
+  const bottleneck = CDA_BOTTLENECKS[assessmentResult.primaryBottleneck] || CDA_BOTTLENECKS.clarity;
 
   const [animatedScore, setAnimatedScore] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState<string | null>(null);
 
-  // SVG ring calculation
-  // Radius = 94 => circumference = 2 * PI * 94 ≈ 590.6
+  // SVG Gauge calculation
   const circumference = 590;
-  const strokeDashoffset = circumference - (totalScore / 100) * circumference;
+  const strokeDashoffset = circumference - (assessmentResult.totalScore / 100) * circumference;
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
 
+    trackEvent('profile_assigned', {
+      profile: assessmentResult.profile,
+      offer: 'tier_1',
+      bottleneck: assessmentResult.primaryBottleneck,
+      leadTemperature: assessmentResult.leadTemperature
+    });
+
+    trackEvent('offer_recommended', {
+      offerId: offer.id,
+      productName: offer.productName,
+      price: offer.foundingPrice
+    });
+
+    // Score gauge animation
     let start = 0;
     const duration = 1200;
     const stepTime = 20;
     const steps = duration / stepTime;
-    const increment = totalScore / steps;
+    const increment = assessmentResult.totalScore / steps;
 
     const timer = setInterval(() => {
       start += increment;
-      if (start >= totalScore) {
-        setAnimatedScore(totalScore);
+      if (start >= assessmentResult.totalScore) {
+        setAnimatedScore(assessmentResult.totalScore);
         clearInterval(timer);
       } else {
         setAnimatedScore(Math.floor(start));
@@ -67,10 +99,10 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
     }, stepTime);
 
     return () => clearInterval(timer);
-  }, [totalScore]);
+  }, [assessmentResult, offer]);
 
   const handleShare = async () => {
-    const text = `My Beyond Salary Score is ${totalScore}/100 (${result.name})! Discover your income safety with the Beyond Salary Scorecard.`;
+    const text = `I took The Beyond Salary Scorecard™ by Caramel Digital Academy. My profile: ${profile.name} (Primary Need: ${profile.primaryNeed}). Discover your Beyond Salary readiness!`;
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -82,33 +114,109 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
     window.print();
   };
 
-  const scrollToPathways = () => {
-    const el = document.getElementById('pathways-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+  const handleCtaClick = (platform: 'selar' | 'paystack' | 'direct') => {
+    trackEvent('cta_clicked', { platform, offerId: offer.id });
+
+    if (platform === 'selar') {
+      trackEvent('selar_clicked', { offerId: offer.id });
+      if (offer.selarUrl) {
+        window.open(offer.selarUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
     }
+
+    if (platform === 'paystack') {
+      trackEvent('paystack_clicked', { offerId: offer.id });
+      if (offer.paystackUrl) {
+        window.open(offer.paystackUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
+    }
+
+    if (platform === 'direct' && offer.existingSiteUrl) {
+      window.open(offer.existingSiteUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // If no direct payment URL configured yet, open clean enrollment confirmation modal
+    setShowCheckoutModal(platform);
   };
 
-  return (
-    <div className="w-full bg-[#F8F4EC] text-[#211A17]">
-      {/* Results Hero Header */}
-      <section className="bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026] py-12 md:py-16 text-center">
-        <div className="max-w-[1080px] mx-auto px-5">
-          {leadData.firstName && (
-            <div className="inline-flex items-center gap-2 bg-[#3B261D] border border-[#C9A227]/40 px-4 py-1.5 rounded-full text-xs font-bold text-[#C9A227] mb-5 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
-              <span>Diagnostic Report for {leadData.firstName}</span>
-            </div>
-          )}
+  // Dimensions
+  const dimDependency = {
+    label: 'Salary Dependency',
+    score: assessmentResult.normalizedScores.salaryDependency,
+    rating: getDimensionRating(assessmentResult.normalizedScores.salaryDependency),
+    desc: assessmentResult.normalizedScores.salaryDependency > 65 
+      ? 'High salary dependency. Your living costs rely predominantly on your active employment income.'
+      : assessmentResult.normalizedScores.salaryDependency > 35
+      ? 'Moderate salary dependency with developing secondary avenues.'
+      : 'Low salary dependency. You have active revenue streams protecting your baseline.'
+  };
 
-          {/* Radial Circular Score Gauge */}
-          <div className="relative w-[220px] h-[220px] mx-auto mb-6">
+  const dimResilience = {
+    label: 'Financial Resilience',
+    score: assessmentResult.normalizedScores.financialResilience,
+    rating: getDimensionRating(assessmentResult.normalizedScores.financialResilience),
+    desc: assessmentResult.normalizedScores.financialResilience > 65
+      ? 'High financial vulnerability. Emergency runway requires immediate buffer protection.'
+      : assessmentResult.normalizedScores.financialResilience > 35
+      ? 'Moderate resilience. Capable of weathering small disruptions with caution.'
+      : 'Strong resilience. Solid liquid reserves in place for strategic investment.'
+  };
+
+  const dimSkill = {
+    label: 'Skill Readiness',
+    score: assessmentResult.normalizedScores.skillReadiness,
+    rating: getDimensionRating(assessmentResult.normalizedScores.skillReadiness),
+    desc: assessmentResult.normalizedScores.skillReadiness > 65
+      ? 'High skill readiness. You possess marketable capabilities that the market is willing to pay for.'
+      : assessmentResult.normalizedScores.skillReadiness > 35
+      ? 'Developing skill capability. You have foundational strengths that need market-packaging.'
+      : 'Emerging skill capability. Focused digital or AI skill acquisition will yield your fastest return.'
+  };
+
+  const dimExecution = {
+    label: 'Execution System',
+    score: assessmentResult.normalizedScores.executionSystem,
+    rating: getDimensionRating(assessmentResult.normalizedScores.executionSystem),
+    desc: assessmentResult.normalizedScores.executionSystem > 65
+      ? 'Advanced execution readiness. You have tested client pathways or active operating consistency.'
+      : assessmentResult.normalizedScores.executionSystem > 35
+      ? 'Developing execution readiness. You have initiated attempts but lack a predictable client system.'
+      : 'Emerging execution system. You need a structured step-by-step implementation framework.'
+  };
+
+  const dimensions = [dimDependency, dimResilience, dimSkill, dimExecution];
+
+  // Helper for formatting Nigerian Naira
+  const formatNaira = (val: number) => `₦${val.toLocaleString()}`;
+
+  return (
+    <div className="w-full bg-[#F8F4EC] text-[#211A17] selection:bg-[#C9A227]/30">
+      {/* SECTION 1: Results Hero & Profile Display */}
+      <section className="bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026] py-12 md:py-16 text-center relative overflow-hidden">
+        {/* Subtle background ambient accents */}
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#C9A227]/5 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-[#03037E]/20 blur-3xl pointer-events-none" />
+
+        <div className="max-w-[1080px] mx-auto px-5 relative z-10">
+          {/* Header Tag / User Identity */}
+          <div className="inline-flex items-center gap-2 bg-[#3B261D] border border-[#C9A227]/40 px-4 py-1.5 rounded-full text-xs font-bold text-[#C9A227] mb-5 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+            <span>
+              {leadData.fullName ? `Diagnostic Assessment for ${leadData.fullName}` : 'Personalised Diagnostic Assessment'}
+            </span>
+          </div>
+
+          {/* Circular Score Gauge */}
+          <div className="relative w-[210px] h-[210px] mx-auto mb-6">
             <svg viewBox="0 0 220 220" className="w-full h-full transform -rotate-90">
               <defs>
                 <linearGradient id="ringGradWarm" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stopColor="#4A3026" />
                   <stop offset="60%" stopColor="#C9A227" />
-                  <stop offset="100%" stopColor="#D4AF37" />
+                  <stop offset="100%" stopColor="#FFBE4D" />
                 </linearGradient>
               </defs>
               <circle
@@ -139,291 +247,727 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               <span className="font-extrabold text-5xl text-[#C9A227] tracking-tight">
                 {animatedScore}
               </span>
-              <span className="text-xs font-bold uppercase tracking-wider text-[#E1D5C5] mt-0.5">
-                out of 100
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#E1D5C5] mt-0.5">
+                Beyond Salary Index
               </span>
             </div>
           </div>
 
-          <div className="text-xs font-bold uppercase tracking-widest text-[#C9A227] mb-2">
-            Your Income Safety Classification
+          {/* Primary Profile Announcement */}
+          <div className="inline-block bg-[#03037E]/60 border border-[#C9A227]/50 px-4 py-1.5 rounded-full text-[11px] font-extrabold tracking-widest text-[#FFBE4D] uppercase mb-3">
+            YOUR BEYOND SALARY PROFILE
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#F8F4EC]">
-            {result.name}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#F8F4EC] tracking-tight">
+            {profile.name}
           </h1>
 
-          <p className="mt-3 text-sm sm:text-base text-[#F3EDE3] max-w-xl mx-auto leading-relaxed font-medium">
-            {result.sub}
+          <div className="mt-3 inline-block bg-[#3B261D] border border-[#C9A227]/30 text-[#C9A227] px-4 py-1 rounded-full text-xs font-bold tracking-wide uppercase">
+            PRIMARY NEED: {profile.primaryNeed}
+          </div>
+
+          <p className="mt-4 text-base sm:text-lg text-[#F3EDE3] max-w-2xl mx-auto leading-relaxed font-medium">
+            "{profile.message}"
           </p>
 
-          {/* Quick Action Buttons */}
+          {/* Quick Anchor Link to Action Plan */}
+          <div className="mt-5">
+            <a
+              href="#transformation-journey"
+              className="inline-flex items-center gap-2 text-xs font-bold text-[#FFBE4D] hover:text-[#FFFFFF] underline underline-offset-4 transition-colors"
+            >
+              <span>Jump directly to your recommended transformation step</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
+
+          {/* Actions (Share / Print) */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={handleShare}
-              className="inline-flex items-center gap-2 bg-[#3B261D] hover:bg-[#4A3026] border border-[#C9A227]/40 text-xs sm:text-sm font-bold text-[#F8F4EC] px-4 py-2 rounded-xl transition-colors shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[#3B261D] hover:bg-[#4A3026] border border-[#C9A227]/40 text-xs sm:text-sm font-bold text-[#F8F4EC] px-4 py-2.5 rounded-xl transition-colors shadow-xs cursor-pointer"
             >
               {copied ? <Check className="w-4 h-4 text-[#C9A227]" /> : <Share2 className="w-4 h-4 text-[#C9A227]" />}
-              <span>{copied ? 'Summary Copied!' : 'Share Result'}</span>
+              <span>{copied ? 'Summary Copied to Clipboard!' : 'Share Diagnostic'}</span>
             </button>
             <button
               onClick={handlePrint}
-              className="inline-flex items-center gap-2 bg-[#3B261D] hover:bg-[#4A3026] border border-[#C9A227]/40 text-xs sm:text-sm font-bold text-[#F8F4EC] px-4 py-2 rounded-xl transition-colors shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[#3B261D] hover:bg-[#4A3026] border border-[#C9A227]/40 text-xs sm:text-sm font-bold text-[#F8F4EC] px-4 py-2.5 rounded-xl transition-colors shadow-xs cursor-pointer"
             >
               <Printer className="w-4 h-4 text-[#C9A227]" />
-              <span>Print Summary</span>
+              <span>Print / Save as PDF</span>
             </button>
           </div>
         </div>
       </section>
 
-      {/* Strategic Breakdown & Priorities */}
-      <section className="py-12 md:py-16 bg-[#F8F4EC]">
-        <div className="max-w-[720px] mx-auto px-5">
-          <div className="text-sm sm:text-base text-[#211A17] leading-relaxed bg-[#FFFFFF] p-6 rounded-2xl border border-[#E1D5C5] shadow-xs">
-            {result.body}
-          </div>
-
-          {/* Priorities */}
-          <div className="mt-10">
-            <h2 className="text-lg sm:text-xl font-bold text-[#2B1B14] mb-4 flex items-center gap-2">
-              <Award className="w-5 h-5 text-[#C9A227]" />
-              <span>Your Highest Strategic Priorities</span>
+      {/* SECTION 2: YOUR DIAGNOSTIC SNAPSHOT (Four Dimensions) */}
+      <section className="py-12 md:py-16 bg-[#FFFFFF] border-b border-[#E1D5C5]">
+        <div className="max-w-[840px] mx-auto px-5">
+          <div className="text-center max-w-xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-1">
+              <Layers className="w-3.5 h-3.5" />
+              <span>Assessment Breakdown</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2B1B14]">
+              Your Diagnostic Snapshot
             </h2>
+            <p className="mt-2 text-xs sm:text-sm text-[#5C514B] font-medium">
+              We evaluated your responses across four vital dimensions of income security and commercial readiness.
+            </p>
+          </div>
 
-            <div className="space-y-3">
-              {result.priorities.map((item, idx) => (
-                <div 
-                  key={idx} 
-                  className="flex items-start gap-3 p-4 bg-[#FFFFFF] border border-[#E1D5C5] rounded-xl text-xs sm:text-sm text-[#211A17] shadow-2xs font-medium"
-                >
-                  <div className="w-5 h-5 rounded-full bg-[#EFE6D6] text-[#2B1B14] flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
-                    <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {dimensions.map((dim, idx) => (
+              <div 
+                key={idx}
+                className="bg-[#F8F4EC] border border-[#E1D5C5] rounded-2xl p-5 flex flex-col justify-between hover:border-[#C9A227]/60 transition-all shadow-2xs"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-sm font-bold text-[#2B1B14]">{dim.label}</span>
+                    <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${
+                      dim.rating === 'Advanced' || dim.rating === 'Strong'
+                        ? 'bg-[#C9A227]/15 text-[#2B1B14] border-[#C9A227]'
+                        : 'bg-[#EFE6D6] text-[#5C514B] border-[#E1D5C5]'
+                    }`}>
+                      {dim.rating}
+                    </span>
                   </div>
-                  <span className="leading-snug">{item}</span>
+
+                  <div className="w-full h-2 bg-[#E1D5C5] rounded-full overflow-hidden my-3">
+                    <div 
+                      className="h-full bg-gradient-to-r from-[#2B1B14] to-[#C9A227] rounded-full transition-all duration-1000 ease-out"
+                      style={{ width: `${Math.max(8, dim.score)}%` }}
+                    />
+                  </div>
+
+                  <p className="text-xs text-[#5C514B] leading-relaxed font-medium mt-2">
+                    {dim.desc}
+                  </p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
 
-          {/* Quick Win Card */}
-          <div className="mt-8 p-5 bg-[#FFFFFF] border-2 border-[#C9A227] rounded-2xl shadow-sm">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#2B1B14] mb-2">
-              <Lightbulb className="w-4 h-4 text-[#C9A227]" />
-              <span>Your Immediate Quick Win</span>
-            </div>
-            <p className="text-sm text-[#211A17] leading-relaxed font-semibold">
-              {result.quickWin}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Pillar Breakdown & Bottleneck */}
-      <section className="py-12 md:py-16 bg-[#EFE6D6] border-y border-[#E1D5C5]">
-        <div className="max-w-[720px] mx-auto px-5">
-          <div className="mb-8">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-1">
-              Diagnostic Audit
-            </div>
-            <h2 className="text-2xl font-bold text-[#2B1B14]">Your Score Breakdown</h2>
-          </div>
-
-          {/* 4 Pillars Progress Bars */}
-          <div className="space-y-5 bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl p-6 sm:p-8 shadow-xs">
-            <div>
-              <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-[#2B1B14] mb-2">
-                <span>Salary Dependency</span>
-                <span className="text-[#C9A227] font-extrabold">{categoryPercentages.dependency}%</span>
-              </div>
-              <div className="h-2.5 bg-[#E1D5C5] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#2B1B14] to-[#C9A227] rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${categoryPercentages.dependency}%` }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-[#2B1B14] mb-2">
-                <span>Financial Safety</span>
-                <span className="text-[#C9A227] font-extrabold">{categoryPercentages.safety}%</span>
-              </div>
-              <div className="h-2.5 bg-[#E1D5C5] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#2B1B14] to-[#C9A227] rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${categoryPercentages.safety}%` }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-[#2B1B14] mb-2">
-                <span>Skill Readiness</span>
-                <span className="text-[#C9A227] font-extrabold">{categoryPercentages.skill}%</span>
-              </div>
-              <div className="h-2.5 bg-[#E1D5C5] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#2B1B14] to-[#C9A227] rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${categoryPercentages.skill}%` }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-[#2B1B14] mb-2">
-                <span>Execution System</span>
-                <span className="text-[#C9A227] font-extrabold">{categoryPercentages.execution}%</span>
-              </div>
-              <div className="h-2.5 bg-[#E1D5C5] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#2B1B14] to-[#C9A227] rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${categoryPercentages.execution}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Bottleneck Card */}
-          <div className="mt-8 bg-[#2B1B14] text-[#F3EDE3] rounded-2xl p-6 sm:p-8 shadow-md border border-[#4A3026]">
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#C9A227] mb-3">
-              <ShieldAlert className="w-4 h-4 text-[#C9A227]" />
-              <span>Your Primary Beyond Salary Bottleneck</span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-[#F8F4EC] mb-2">
-              {bottleneck.name}
-            </h3>
-            <p className="text-sm text-[#EFE6D6] leading-relaxed">
-              {bottleneck.explain}
-            </p>
-          </div>
-
-          {/* Survival Runway Box (if completed) */}
+          {/* Survival Runway Box (if user completed the optional calculator) */}
           {survivalData && (
-            <div className="mt-6 bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl p-6 text-center shadow-xs">
+            <div className="mt-8 bg-[#F8F4EC] border-2 border-[#C9A227] rounded-2xl p-6 text-center shadow-xs">
               <div className="text-xs font-bold uppercase tracking-wider text-[#2B1B14] mb-1">
-                Your Calculated Financial Survival Runway
+                Your Calculated Survival Runway
               </div>
-              <div className="text-3xl font-extrabold text-[#2B1B14] my-1">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#2B1B14] my-1">
                 {survivalData.months < 0.1 ? '< 0.1' : survivalData.months.toFixed(1)} Months
               </div>
-              <div className="text-xs text-[#5C514B] font-medium">
-                of essential living expenses covered by your current liquid emergency reserves ({survivalData.currency || ''}{survivalData.savings.toLocaleString()} vs. {survivalData.currency || ''}{survivalData.expenses.toLocaleString()}/mo).
-              </div>
+              <p className="text-xs sm:text-sm text-[#5C514B] font-medium max-w-lg mx-auto">
+                Of essential monthly living expenses covered by your liquid savings reserves ({survivalData.currency}{survivalData.savings.toLocaleString()} savings vs. {survivalData.currency}{survivalData.expenses.toLocaleString()}/mo expenses).
+              </p>
             </div>
           )}
         </div>
       </section>
 
-      {/* 7-Day Action Plan */}
-      <section className="py-12 md:py-16 bg-[#F8F4EC]">
-        <div className="max-w-[720px] mx-auto px-5">
-          <div className="mb-8">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-1">
-              Structured Roadmap
+      {/* SECTION 3: PERSONALIZED PROFILE DEEP DIVE (The 7 Strategic Pillars) */}
+      <section className="py-14 md:py-20 bg-[#F8F4EC]">
+        <div className="max-w-[880px] mx-auto px-5">
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-1.5 bg-[#2B1B14] text-[#C9A227] px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-3 shadow-xs">
+              <Compass className="w-3.5 h-3.5" />
+              <span>Personalized Diagnostic Deep Dive</span>
             </div>
-            <h2 className="text-2xl font-bold text-[#2B1B14]">
-              Your Personalised 7-Day Action Plan
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2B1B14] tracking-tight">
+              Understanding Your Current Position
             </h2>
-            <p className="mt-2 text-sm text-[#5C514B] font-medium">
-              One bite-sized focus area per day to build momentum without disrupting your day job.
+            <p className="mt-2 text-sm sm:text-base text-[#5C514B] font-medium">
+              A comprehensive breakdown of where you stand as <strong>{profile.name}</strong>, what to prioritize, and what to set aside for now.
             </p>
           </div>
 
-          <div className="divide-y divide-[#E1D5C5] border-y border-[#E1D5C5] bg-[#FFFFFF] rounded-2xl overflow-hidden border px-5 shadow-2xs">
-            {result.plan.map((dayText, idx) => (
-              <div key={idx} className="py-4.5 flex items-start gap-4">
-                <div className="w-16 h-10 rounded-xl bg-[#EFE6D6] border border-[#E1D5C5] flex items-center justify-center shrink-0 font-bold text-xs text-[#2B1B14]">
-                  DAY {idx + 1}
-                </div>
-                <div className="pt-2 text-sm text-[#211A17] font-semibold leading-snug">
-                  {dayText}
-                </div>
+          {/* Pillar 1 & 2: Where You Currently Are & What This Means */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            <div className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl p-6 shadow-xs">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#03037E] mb-2">
+                <Target className="w-4 h-4 text-[#03037E]" />
+                <span>1. Where You Currently Are</span>
               </div>
-            ))}
+              <h3 className="text-lg font-bold text-[#2B1B14] mb-2">
+                Your Current Reality
+              </h3>
+              <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
+                {profile.whereYouAre}
+              </p>
+            </div>
+
+            <div className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl p-6 shadow-xs">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2">
+                <Info className="w-4 h-4 text-[#C9A227]" />
+                <span>2. What This Means</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#2B1B14] mb-2">
+                The Practical Implication
+              </h3>
+              <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
+                {profile.whatThisMeans}
+              </p>
+            </div>
+          </div>
+
+          {/* Pillar 3 & 4: Your Key Challenge & Your Opportunity */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            <div className="bg-[#FFFFFF] border-l-4 border-l-[#C9A227] border border-[#E1D5C5] rounded-2xl p-6 shadow-xs">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#2B1B14] mb-2">
+                <AlertTriangle className="w-4 h-4 text-[#C9A227]" />
+                <span>3. Your Key Challenge</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#2B1B14] mb-2">
+                The Real Hurdle You Face
+              </h3>
+              <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
+                {profile.keyChallenge}
+              </p>
+            </div>
+
+            <div className="bg-[#FFFFFF] border-l-4 border-l-[#03037E] border border-[#E1D5C5] rounded-2xl p-6 shadow-xs">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#03037E] mb-2">
+                <Lightbulb className="w-4 h-4 text-[#03037E]" />
+                <span>4. Your Greatest Opportunity</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#2B1B14] mb-2">
+                Where Your Upside Lies
+              </h3>
+              <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
+                {profile.opportunity}
+              </p>
+            </div>
+          </div>
+
+          {/* Pillar 5 & 6: What to Focus On First vs What NOT to Worry About Yet */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            <div className="bg-[#EFE6D6] border border-[#C9A227]/40 rounded-2xl p-6 shadow-xs">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#2B1B14] mb-2">
+                <CheckCircle2 className="w-4 h-4 text-[#C9A227]" />
+                <span>5. What to Focus on First</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#2B1B14] mb-2">
+                Your Immediate Priority
+              </h3>
+              <p className="text-xs sm:text-sm text-[#2B1B14] leading-relaxed font-semibold">
+                {profile.focusFirst}
+              </p>
+            </div>
+
+            <div className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl p-6 shadow-xs">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#5C514B] mb-2">
+                <ShieldCheck className="w-4 h-4 text-[#5C514B]" />
+                <span>6. What NOT to Worry About Yet</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#2B1B14] mb-2">
+                Avoid Premature Complexity
+              </h3>
+              <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
+                {profile.whatNotToWorry}
+              </p>
+            </div>
+          </div>
+
+          {/* Pillar 7: Why Clarity Is Your Next Step */}
+          <div className="bg-[#FFFFFF] border-2 border-[#C9A227] rounded-2xl p-6 sm:p-8 shadow-xs mb-8">
+            <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-[#C9A227] mb-2">
+              <Zap className="w-4 h-4 text-[#C9A227]" />
+              <span>7. Why Clarity Is Your Next Step</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-[#2B1B14] mb-3">
+              Before You Build More Income, You Need Clarity on What to Build
+            </h3>
+            <p className="text-sm sm:text-base text-[#2B1B14] leading-relaxed font-medium mb-5">
+              {profile.whyClarity}
+            </p>
+
+            {/* Specific Key Understandings Tailored to This Profile */}
+            <div className="p-5 bg-[#F8F4EC] rounded-xl border border-[#E1D5C5]">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#2B1B14] mb-3">
+                Key Insights You Need to Clarify Right Now:
+              </h4>
+              <div className="space-y-2">
+                {profile.specificUnderstandings.map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#2B1B14] font-medium">
+                    <Check className="w-4 h-4 text-[#C9A227] shrink-0 mt-0.5 stroke-[3]" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Primary Bottleneck Card */}
+          <div className="bg-[#2B1B14] text-[#F3EDE3] border border-[#4A3026] rounded-3xl p-6 sm:p-8 shadow-md">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#C9A227] mb-2">
+              <ShieldAlert className="w-4 h-4 text-[#C9A227]" />
+              <span>YOUR PRIMARY DIAGNOSTIC BOTTLENECK</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-[#F8F4EC]">
+              {bottleneck.name}
+            </h3>
+            <div className="text-xs sm:text-sm font-semibold text-[#FFBE4D] mt-1 mb-4">
+              {bottleneck.subtitle}
+            </div>
+            <p className="text-sm text-[#EFE6D6] leading-relaxed mb-5">
+              {bottleneck.explain}
+            </p>
+            <div className="p-4.5 bg-[#3B261D] border border-[#C9A227]/30 rounded-xl text-xs sm:text-sm text-[#F8F4EC]">
+              <strong className="text-[#C9A227] block mb-1">Recommended Immediate Action Step:</strong>
+              {bottleneck.actionStep}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Recommended Next Steps / Pathways */}
-      <section id="pathways-section" className="py-14 md:py-20 bg-[#EFE6D6] border-t border-[#E1D5C5]">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="max-w-xl mb-10">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-2">
-              Next Step Options
+      {/* SECTION 4: THE BEYOND SALARY TRANSFORMATION JOURNEY (Ecosystem Bridge) */}
+      <section id="transformation-journey" className="py-14 md:py-20 bg-[#FFFFFF] border-t border-[#E1D5C5]">
+        <div className="max-w-[880px] mx-auto px-5">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-1.5 bg-[#2B1B14] text-[#C9A227] px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-3 shadow-xs">
+              <Milestone className="w-3.5 h-3.5" />
+              <span>The Beyond Salary Ecosystem Roadmap</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#2B1B14]">
-              Your Recommended Next Step
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2B1B14] tracking-tight">
+              Everyone Starts with Clarity.
+              <span className="block text-[#C9A227]">Your Next Pathway Comes After the Foundation.</span>
             </h2>
-            <p className="mt-2 text-sm md:text-base text-[#5C514B] font-medium">
-              Practical pathways to help you build income beyond your salary — no fake urgency, just structured direction.
+            <p className="mt-3 text-sm sm:text-base text-[#5C514B] font-medium leading-relaxed">
+              You are not being asked to choose between four paid programs today. The Scorecard has revealed where you stand. The next step is establishing your personal roadmap through our foundational cohort.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {PATHWAYS.map((p, idx) => (
-              <div 
-                key={idx}
-                className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:border-[#C9A227] transition-all"
-              >
-                <div>
-                  <span className="inline-block text-[11px] font-bold px-3 py-1 rounded-full mb-4 bg-[#EFE6D6] text-[#2B1B14] border border-[#E1D5C5]">
-                    {p.tier}
+          {/* 4-Step Ecosystem Pathway Graphic */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            {/* Step 1 */}
+            <div className="bg-[#F8F4EC] border-2 border-[#C9A227] rounded-2xl p-5 relative flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-xs font-extrabold text-[#C9A227] uppercase tracking-wider">Step 01</span>
+                  <span className="bg-[#C9A227] text-[#2B1B14] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
+                    COMPLETED
                   </span>
-                  <h3 className="text-lg font-bold text-[#2B1B14] mb-2">{p.name}</h3>
-                  <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed mb-6 font-medium">
-                    {p.desc}
-                  </p>
-
-                  <div className="space-y-2.5 pt-4 border-t border-[#E1D5C5] mb-6">
-                    {p.features.map((feat, fIdx) => (
-                      <div key={fIdx} className="flex items-center gap-2 text-xs text-[#211A17] font-medium">
-                        <Check className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
+                <h4 className="font-bold text-sm text-[#2B1B14] mb-1">
+                  The Scorecard Diagnostic
+                </h4>
+                <p className="text-xs text-[#5C514B] leading-relaxed">
+                  Revealed where you currently are ({profile.name}) and identified your primary bottleneck.
+                </p>
+              </div>
+              <div className="mt-3 text-[11px] font-bold text-[#2B1B14] flex items-center gap-1">
+                <Check className="w-3.5 h-3.5 text-[#C9A227] stroke-[3]" />
+                <span>Diagnosis Unlocked</span>
+              </div>
+            </div>
 
-                <button 
-                  onClick={() => alert(`Thank you ${leadData.firstName || ''}! Our team has registered your interest in ${p.name}. Check your email (${leadData.email || 'provided'}) for onboarding details.`)}
-                  className="w-full py-3 px-4 rounded-xl text-xs sm:text-sm font-bold border-2 border-[#2B1B14] text-[#2B1B14] hover:bg-[#2B1B14] hover:text-[#F8F4EC] transition-colors cursor-pointer"
+            {/* Step 2 */}
+            <div className="bg-[#2B1B14] text-[#F3EDE3] border-2 border-[#FFBE4D] rounded-2xl p-5 relative flex flex-col justify-between shadow-md">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-xs font-extrabold text-[#FFBE4D] uppercase tracking-wider">Step 02</span>
+                  <span className="bg-[#FFBE4D] text-[#2B1B14] text-[10px] font-black px-2 py-0.5 rounded-full uppercase animate-pulse">
+                    YOUR NEXT STEP
+                  </span>
+                </div>
+                <h4 className="font-bold text-sm text-[#FFFFFF] mb-1">
+                  Clarity & Foundation Cohort
+                </h4>
+                <p className="text-xs text-[#E1D5C5] leading-relaxed">
+                  Live cohort to understand your profile, audit your skills, and remove information overload.
+                </p>
+              </div>
+              <div className="mt-3 text-[11px] font-extrabold text-[#FFBE4D]">
+                Investment: ₦10,999
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-[#F8F4EC] border border-[#E1D5C5] rounded-2xl p-5 relative flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-xs font-extrabold text-[#5C514B] uppercase tracking-wider">Step 03</span>
+                  <span className="bg-[#EFE6D6] text-[#5C514B] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                    IN TRAINING
+                  </span>
+                </div>
+                <h4 className="font-bold text-sm text-[#2B1B14] mb-1">
+                  Personal Beyond Salary Roadmap
+                </h4>
+                <p className="text-xs text-[#5C514B] leading-relaxed">
+                  Formulated live during the cohort: your tailored 30-day plan matching your specific job schedule.
+                </p>
+              </div>
+              <div className="mt-3 text-[11px] font-semibold text-[#5C514B]">
+                Live Mentorship Output
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="bg-[#F8F4EC] border border-[#E1D5C5] rounded-2xl p-5 relative flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-xs font-extrabold text-[#5C514B] uppercase tracking-wider">Step 04</span>
+                  <span className="bg-[#EFE6D6] text-[#5C514B] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                    ADVANCED
+                  </span>
+                </div>
+                <h4 className="font-bold text-sm text-[#2B1B14] mb-1">
+                  Caramel Digital Academy Pathways
+                </h4>
+                <p className="text-xs text-[#5C514B] leading-relaxed">
+                  Choose your practical development path (AI Video, AI Web, Productization, Accelerator, Multiplier).
+                </p>
+              </div>
+              <div className="mt-3 text-[11px] font-semibold text-[#03037E]">
+                Available at carameldigitals.com
+              </div>
+            </div>
+          </div>
+
+          {/* Reassurance Callout */}
+          <div className="p-5 bg-[#F8F4EC] border border-[#E1D5C5] rounded-2xl text-center text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
+            <strong className="text-[#2B1B14] block mb-1">The Caramel Digital Academy Principle:</strong>
+            "Before you build more income, you need clarity on what to build. Advanced training without clarity creates confusion. That is why every participant begins with the ₦10,999 Beyond Salary Clarity & Foundation Cohort."
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: THE RECOMMENDED PROGRAM (Single Entry Cohort Offer) */}
+      <section id="recommended-offer" className="py-14 md:py-20 bg-[#EFE6D6] border-t border-[#E1D5C5]">
+        <div className="max-w-[880px] mx-auto px-5">
+          {/* Header */}
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-1.5 bg-[#2B1B14] text-[#C9A227] px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-3 shadow-xs">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Your Single Recommended Next Step</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2B1B14] tracking-tight">
+              Beyond Salary Clarity & Foundation Cohort
+            </h2>
+            <p className="mt-2 text-sm sm:text-base text-[#5C514B] font-medium leading-relaxed">
+              Your Scorecard showed you where you are. The Clarity & Foundation Cohort helps you understand where to go next.
+            </p>
+          </div>
+
+          {/* Primary Offer Card */}
+          <div className="bg-[#FFFFFF] border-2 border-[#C9A227] rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+            {/* Top Accent Ribbon */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-[#E1D5C5]">
+              <div>
+                <span className="inline-block text-[11px] font-extrabold tracking-wider uppercase px-3 py-1 rounded-full bg-[#2B1B14] text-[#C9A227] mr-2">
+                  THE ENTRY POINT INTO THE BEYOND SALARY MOVEMENT™
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-[#5C514B] mt-1 sm:mt-0">
+                  <Clock className="w-3.5 h-3.5 text-[#C9A227]" />
+                  Live Cohort Experience
+                </span>
+              </div>
+
+              <div className="bg-[#FFBE4D]/20 border border-[#C9A227] px-3.5 py-1 rounded-full text-xs font-bold text-[#2B1B14]">
+                {offer.cohortStatus}
+              </div>
+            </div>
+
+            {/* Product Title & Tagline */}
+            <div className="my-6">
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#2B1B14] leading-tight">
+                {offer.productName}
+              </h3>
+              <p className="text-sm sm:text-base text-[#5C514B] font-semibold mt-2">
+                "{offer.tagline}"
+              </p>
+              <div className="mt-3 text-xs sm:text-sm font-medium text-[#2B1B14] bg-[#F8F4EC] p-3 rounded-xl border border-[#E1D5C5]">
+                <strong>Delivery Format:</strong> {offer.delivery}
+                {offer.trainingModel && (
+                  <span className="block text-xs text-[#5C514B] mt-1">
+                    <strong>Pedagogy:</strong> {offer.trainingModel}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Core Transformation */}
+            <div className="p-5 rounded-2xl bg-[#03037E]/5 border border-[#03037E]/20 mb-8">
+              <div className="text-xs font-bold uppercase tracking-wider text-[#03037E] mb-1 flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-[#03037E]" />
+                <span>Primary Transformation</span>
+              </div>
+              <p className="text-sm sm:text-base text-[#211A17] font-semibold leading-relaxed">
+                {offer.primaryTransformation}
+              </p>
+            </div>
+
+            {/* What You'll Experience Inside the Cohort (10 Core Deliverables) */}
+            <div className="mb-8">
+              <h4 className="text-base font-bold text-[#2B1B14] mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#C9A227]" />
+                <span>What You Will Experience Inside the Cohort:</span>
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {offer.whatYouWillWorkOn.map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#211A17] font-medium bg-[#F8F4EC] p-3 rounded-xl border border-[#E1D5C5]">
+                    <Check className="w-4 h-4 text-[#C9A227] shrink-0 mt-0.5 stroke-[3]" />
+                    <span className="leading-snug">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* What You Will Leave With / Tangible Deliverables */}
+            <div className="mb-8 p-5 bg-[#F8F4EC] border border-[#E1D5C5] rounded-2xl">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-[#2B1B14] mb-3 flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-[#C9A227]" />
+                <span>What You Will Leave With:</span>
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {offer.whatYouWillBuild.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-[#211A17] font-semibold bg-[#FFFFFF] p-2.5 rounded-xl border border-[#E1D5C5]">
+                    <Sparkles className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Included Foundational 3-Book Digital Bundle Callout */}
+            <div className="mb-8 p-5 rounded-2xl bg-[#C9A227]/10 border border-[#C9A227]/40">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-[#C9A227] text-[#2B1B14] rounded-xl shrink-0">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-extrabold uppercase tracking-wider text-[#2B1B14]">
+                    Special Program Bonus Included Free (₦22,500 Value)
+                  </div>
+                  <p className="text-xs sm:text-sm text-[#5C514B] font-medium mt-1 leading-relaxed">
+                    Every enrolled cohort participant receives instant digital access to the three foundational Beyond Salary assets:
+                    <strong> Beyond Salary Career Compass</strong> (₦7,500), <strong>Beyond Salary Career to Cash</strong> (₦7,500), and <strong>Beyond Salary AI Prompt Vault</strong> (₦7,500).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Complete Value Stack Breakdown */}
+            <div className="mb-8 p-5 sm:p-6 bg-[#F8F4EC] border border-[#E1D5C5] rounded-2xl">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-bold text-[#2B1B14] uppercase tracking-wider">
+                  Comprehensive Curriculum Value Breakdown
+                </h4>
+                <span className="text-xs text-[#5C514B] font-semibold">
+                  Standard Attributed Value
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {offer.valueStack.map((vItem, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-xs sm:text-sm text-[#5C514B] gap-4">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#C9A227] shrink-0 stroke-[3]" />
+                      <span>{vItem.name}</span>
+                    </div>
+                    <span className="font-bold text-[#2B1B14] whitespace-nowrap">
+                      {vItem.isBonus ? (
+                        <span className="text-[#C9A227] uppercase text-[11px] font-extrabold">BONUS</span>
+                      ) : (
+                        formatNaira(vItem.value)
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 pt-4 border-t-2 border-[#E1D5C5] flex items-center justify-between text-xs sm:text-sm font-extrabold text-[#2B1B14]">
+                <span>Total Attributed Value:</span>
+                <span className="text-base sm:text-lg text-[#C9A227]">
+                  {formatNaira(offer.totalAttributedValue)}
+                </span>
+              </div>
+            </div>
+
+            {/* Pricing Section & Single CTA Focus */}
+            <div className="bg-[#2B1B14] text-[#F3EDE3] p-6 sm:p-8 rounded-2xl text-center mb-8 border border-[#4A3026]">
+              {offer.cohortCapacityText && (
+                <div className="inline-block text-[11px] font-bold uppercase tracking-wider text-[#FFBE4D] bg-[#3B261D] border border-[#C9A227]/40 px-3 py-1 rounded-full mb-3">
+                  {offer.cohortCapacityText}
+                </div>
+              )}
+
+              <div className="flex items-center justify-center gap-4 my-2">
+                <span className="text-base sm:text-lg text-[#E1D5C5] line-through font-semibold">
+                  {formatNaira(offer.standardPrice)}
+                </span>
+                <span className="text-3xl sm:text-4xl md:text-5xl font-black text-[#FFBE4D] tracking-tight">
+                  {formatNaira(offer.foundingPrice)}
+                </span>
+              </div>
+
+              <p className="text-xs text-[#E1D5C5] font-medium mt-1">
+                Founding cohort enrollment rate • 100% comprehensive practical curriculum
+              </p>
+
+              {/* Call-to-Action Buttons */}
+              <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+                <button
+                  onClick={() => handleCtaClick('selar')}
+                  className="w-full group flex items-center justify-center gap-2 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-extrabold text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] cursor-pointer"
                 >
-                  Explore {p.tier}
+                  <CreditCard className="w-4 h-4" />
+                  <span>JOIN VIA SELAR</span>
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </button>
+
+                <button
+                  onClick={() => handleCtaClick('paystack')}
+                  className="w-full group flex items-center justify-center gap-2 bg-[#03037E] hover:bg-[#040498] text-[#FFFFFF] font-extrabold text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 text-[#FFBE4D]" />
+                  <span>JOIN VIA PAYSTACK</span>
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
-            ))}
+
+              <div className="mt-3 text-[11px] text-[#EFE6D6] font-medium flex items-center justify-center gap-2">
+                <span>🔒 Secure 256-bit encrypted checkout</span>
+                <span>•</span>
+                <span>Instant cohort confirmation</span>
+              </div>
+            </div>
+
+            {/* Disclaimer / Guarantee Framing */}
+            <div className="p-4.5 bg-[#F8F4EC] border border-[#E1D5C5] rounded-xl text-left text-xs text-[#5C514B] leading-relaxed font-medium">
+              <div className="flex items-start gap-2.5">
+                <Info className="w-4 h-4 text-[#C9A227] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-[#2B1B14] block mb-0.5">Program Commitment & Integrity Disclaimer:</strong>
+                  {CDA_BRAND_CONFIG.guaranteeDisclaimer}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* Final Results Call to Action */}
-      <section className="py-16 bg-[#F8F4EC]">
-        <div className="max-w-[1080px] mx-auto px-5">
-          <div className="bg-[#2B1B14] text-[#F3EDE3] text-center rounded-3xl p-10 md:p-14 shadow-xl border border-[#4A3026]">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#F8F4EC] max-w-xl mx-auto leading-snug">
-              You now know where you are. The next step is deciding what you'll do with that clarity.
-            </h2>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
-                onClick={scrollToPathways}
-                className="group flex items-center justify-center gap-2 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-bold text-sm sm:text-base px-8 py-4 rounded-xl shadow-lg transition-all active:scale-95 w-full sm:w-auto cursor-pointer"
-              >
-                <span>See My Recommended Next Step</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </button>
+          {/* Context Card: What Happens After the Foundation? (Academy Pathways) */}
+          <div className="mt-8 p-6 bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl text-left">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#03037E] mb-2">
+              <Building2 className="w-4 h-4 text-[#03037E]" />
+              <span>Caramel Digital Academy Ecosystem Context</span>
+            </div>
+            <h4 className="text-base font-bold text-[#2B1B14] mb-2">
+              Where do you go after completing the Clarity & Foundation Cohort?
+            </h4>
+            <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium mb-3">
+              The next stage introduces practical implementation pathways—including <strong>AI Video Creation</strong>, <strong>AI Website Building</strong>, <strong>Digital Productization</strong>, the <strong>Income Accelerator™</strong>, and the <strong>Sovereign Income Multiplier System™</strong>.
+            </p>
+            <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium mb-4">
+              During the live training, your mentor will help you interpret your personal Beyond Salary Roadmap and guide you toward the logical practical pathway that matches your readiness. You can explore all programs anytime on our main academy portal:
+            </p>
+            <a
+              href={CDA_BRAND_CONFIG.academyWebsiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-bold text-[#03037E] hover:text-[#C9A227] transition-colors"
+            >
+              <span>Explore Caramel Digital Academy (carameldigitals.com)</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </div>
 
-              <button
-                onClick={onRetake}
-                className="flex items-center justify-center gap-2 bg-transparent border-2 border-[#C9A227]/50 hover:border-[#C9A227] text-[#F8F4EC] font-bold text-sm sm:text-base px-6 py-3.5 rounded-xl transition-all active:scale-95 w-full sm:w-auto cursor-pointer"
+          {/* Secondary Option: Admissions Assistance */}
+          <div className="mt-8 text-center p-6 bg-[#FFFFFF] border border-[#E1D5C5] rounded-2xl">
+            <h4 className="text-sm font-bold text-[#2B1B14] mb-1 flex items-center justify-center gap-1.5">
+              <HelpCircle className="w-4 h-4 text-[#C9A227]" />
+              <span>Have specific questions before enrolling?</span>
+            </h4>
+            <p className="text-xs sm:text-sm text-[#5C514B] font-medium max-w-md mx-auto mb-4">
+              Want to discuss your diagnostic results or confirm details with our admissions team? We are here to guide you.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a
+                href={CDA_BRAND_CONFIG.supportWhatsAppLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-[#FFFFFF] font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl transition-colors shadow-xs"
               >
-                <RotateCcw className="w-4 h-4" />
-                <span>Retake the Scorecard</span>
-              </button>
+                <MessageCircle className="w-4 h-4" />
+                <span>Chat with CDA Admissions on WhatsApp</span>
+              </a>
+              <a
+                href={`mailto:${CDA_BRAND_CONFIG.supportEmail}?subject=Beyond%20Salary%20Scorecard%20Inquiry%20-%20${encodeURIComponent(leadData.fullName || '')}`}
+                className="inline-flex items-center gap-2 bg-[#F8F4EC] hover:bg-[#EFE6D6] border border-[#E1D5C5] text-[#2B1B14] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-colors"
+              >
+                <span>Email Admissions</span>
+              </a>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Retake & Navigation Footer Section */}
+      <section className="py-12 bg-[#F8F4EC] border-t border-[#E1D5C5]">
+        <div className="max-w-[840px] mx-auto px-5 text-center">
+          <button
+            onClick={onRetake}
+            className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#EFE6D6] border-2 border-[#2B1B14] text-[#2B1B14] font-bold text-xs sm:text-sm px-6 py-3 rounded-xl transition-all cursor-pointer"
+          >
+            <RotateCcw className="w-4 h-4 text-[#C9A227]" />
+            <span>Retake the Scorecard Diagnostic</span>
+          </button>
+        </div>
+      </section>
+
+      {/* Direct Enrollment Modal (shown when external payment links are pending configuration) */}
+      {showCheckoutModal && (
+        <div className="fixed inset-0 z-50 bg-[#2B1B14]/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[#FFFFFF] border border-[#E1D5C5] rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-left">
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-[#C9A227] bg-[#F8F4EC] px-3 py-1 rounded-full border border-[#E1D5C5] mb-4">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Priority Enrollment Reservation</span>
+            </div>
+
+            <h3 className="text-xl font-bold text-[#2B1B14] mb-2">
+              Confirming Enrollment for {offer.productName}
+            </h3>
+
+            <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed mb-4">
+              You are securing your seat in the founding cohort at the investment of <strong>{formatNaira(offer.foundingPrice)}</strong>.
+            </p>
+
+            <div className="bg-[#F8F4EC] p-4 rounded-xl border border-[#E1D5C5] text-xs space-y-1.5 mb-5">
+              <div><strong>Name:</strong> {leadData.fullName || 'Participant'}</div>
+              <div><strong>Email:</strong> {leadData.email || 'On file'}</div>
+              <div><strong>WhatsApp:</strong> {leadData.whatsapp || 'On file'}</div>
+              <div><strong>Gateway:</strong> {showCheckoutModal.toUpperCase()}</div>
+              <div><strong>Program:</strong> Beyond Salary Clarity & Foundation Cohort</div>
+            </div>
+
+            <p className="text-[11px] text-[#5C514B] mb-5">
+              Our admissions desk will immediately dispatch your secure payment invoice and onboarding instructions directly to <strong>{leadData.email}</strong> and <strong>{leadData.whatsapp}</strong>.
+            </p>
+
+            <div className="flex flex-col gap-2.5">
+              <a
+                href={`${CDA_BRAND_CONFIG.supportWhatsAppLink}&text=Hello%2C%20I%20want%20to%20complete%20my%20enrollment%20for%20${encodeURIComponent(offer.productName)}%20(${formatNaira(offer.foundingPrice)})`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-[#FFFFFF] font-bold text-sm py-3.5 px-4 rounded-xl transition-colors text-center"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>Confirm Instantly on WhatsApp</span>
+              </a>
+
+              <button
+                onClick={() => setShowCheckoutModal(null)}
+                className="w-full py-3 px-4 rounded-xl text-xs font-bold text-[#5C514B] hover:text-[#2B1B14] transition-colors cursor-pointer"
+              >
+                Close & Return to Diagnostic Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

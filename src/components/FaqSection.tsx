@@ -42,7 +42,7 @@ export const FaqSection: React.FC = () => {
     {
       question: 'What happens immediately after I finish the assessment?',
       answer:
-        'You receive an instant, full-screen diagnostic report detailing your overall Beyond Salary Index, your scores across Dependency, Safety, Skill, and Execution, your archetype profile (e.g., The Ready But Stuck, The Income Explorer), and targeted recommendations to begin building options.',
+        'You receive an instant, full-screen diagnostic report detailing your overall Beyond Salary Index, your scores across Dependency, Safety, Skill, and Execution, your archetype profile (e.g., Ready but Stuck, The Income Explorer), and targeted recommendations to begin building options.',
     },
   ];
 

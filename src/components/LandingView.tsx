@@ -63,8 +63,8 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
     },
     {
       tag: 'Profile 03',
-      title: 'The Ready But Stuck',
-      desc: 'You already possess valuable professional knowledge and skills, but struggle with packaging an offer and converting ability into paying income.'
+      title: 'Ready but Stuck',
+      desc: 'You have moved beyond thinking about extra income. You are closer to taking action, but need the right direction, structure, and packaging.'
     },
     {
       tag: 'Profile 04',
@@ -82,7 +82,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
     {
       num: '02',
       title: 'Get your personalised score',
-      desc: 'Your answers will be analysed across four important areas of income security.'
+      desc: 'Your answers are evaluated across 4 dimensions: Salary Dependency, Financial Resilience, Skill Readiness, and Execution System.'
     },
     {
       num: '03',
@@ -144,11 +144,11 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
                   initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
-                  className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm font-semibold bg-[#38231A] border border-[#C9A227]/40 px-3.5 sm:px-4 py-2 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
+                  className="inline-flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs md:text-sm font-semibold bg-[#38231A] border border-[#C9A227]/40 px-3.5 sm:px-4 py-2 rounded-2xl sm:rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.4)] max-w-full"
                 >
                   <span className="w-2 h-2 rounded-full bg-[#C9A227] shadow-[0_0_6px_#C9A227] shrink-0" />
                   <span className="tracking-wider uppercase text-[11px] md:text-xs font-semibold text-[#F8F4EC]">
-                    FOR AFRICAN PROFESSIONALS WHO WANT
+                    FOR AFRICAN PROFESSIONALS WITH A 9–5 WHO WANT TO BUILD INCOME OPTIONS
                   </span>
                   <motion.span
                     initial={shouldReduceMotion ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
@@ -187,7 +187,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
                     >
                       <Sparkles className="w-3.5 h-3.5 text-[#C9A227] shrink-0 inline-block drop-shadow-[0_0_6px_rgba(201,162,39,0.7)]" />
                       <span className="shimmer-gold-text">
-                        MORE FINANCIAL OPTIONS
+                        BEYOND SALARY
                       </span>
                     </motion.span>
                   </motion.span>
@@ -986,7 +986,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
               </div>
 
               <div className="mt-6 pt-4 border-t border-[#E1D5C5] text-xs text-[#5C514B] font-medium">
-                The Beyond Salary Movement is grounded in practical systems, not hype.
+                Caramel Digital Academy's Beyond Salary Movement™ is grounded in practical systems, not hype.
               </div>
             </div>
           </div>

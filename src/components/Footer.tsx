@@ -10,13 +10,13 @@ export const Footer: React.FC = () => {
             <div className="mb-4">
               <img 
                 src={beyondSalaryLogo} 
-                alt="Beyond Salary Movement" 
+                alt="Beyond Salary Movement — Caramel Digital Academy" 
                 className="h-12 sm:h-14 md:h-16 w-auto object-contain brightness-105"
                 referrerPolicy="no-referrer"
               />
             </div>
             <p className="text-sm text-[#EFE6D6] leading-relaxed">
-              Helping African professionals build practical skills, systems, and resilient income options beyond one salary.
+              Caramel Digital Academy's flagship movement helping African professionals build practical skills, systems, and resilient income options beyond one salary.
             </p>
           </div>
 
@@ -29,7 +29,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#EFE6D6]">
-          <div>© 2026 Beyond Salary Movement. All rights reserved.</div>
+          <div>© 2026 Caramel Digital Academy (CDA) • Beyond Salary Movement™. All rights reserved.</div>
           <div className="flex items-center gap-6">
             <span>Free 5-minute diagnostic</span>
             <span>•</span>

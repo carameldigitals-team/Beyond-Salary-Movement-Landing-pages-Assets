@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { ScreenType, CategoryId, SurvivalCalc, LeadData } from './types';
-import { QUESTIONS, RESULT_CATEGORIES } from './data/scorecardData';
+import React, { useState, useEffect } from 'react';
+import { ScreenType, SurvivalCalc, LeadData, AssessmentResult } from './types';
+import { QUESTIONS } from './data/scorecardData';
+import { generateAssessmentResult } from './utils/scoringEngine';
+import { trackEvent } from './utils/analytics';
 import { HeaderNav } from './components/HeaderNav';
 import { Footer } from './components/Footer';
 import { LandingView } from './components/LandingView';
@@ -16,24 +18,19 @@ export default function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(new Array(QUESTIONS.length).fill(null));
   const [survivalData, setSurvivalData] = useState<SurvivalCalc | null>(null);
-  const [leadData, setLeadData] = useState<LeadData>({ firstName: '', email: '', whatsapp: '' });
-
-  // Calculated Results state
-  const [totalScore, setTotalScore] = useState(0);
-  const [categoryPercentages, setCategoryPercentages] = useState<Record<CategoryId, number>>({
-    dependency: 0,
-    safety: 0,
-    skill: 0,
-    execution: 0
-  });
-  const [bottleneckCategory, setBottleneckCategory] = useState<CategoryId>('dependency');
-  const [resultKey, setResultKey] = useState('survivor');
+  const [leadData, setLeadData] = useState<LeadData>({ fullName: '', firstName: '', email: '', whatsapp: '' });
+  const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
 
   // Question navigation handlers
   const handleSelectOption = (optionIndex: number) => {
     const nextAnswers = [...answers];
     nextAnswers[currentQuestionIndex] = optionIndex;
     setAnswers(nextAnswers);
+
+    trackEvent('question_answered', {
+      questionNumber: currentQuestionIndex + 1,
+      optionIndex
+    });
   };
 
   const handleNextQuestion = () => {
@@ -75,56 +72,64 @@ export default function App() {
   const handleLeadSubmit = (lead: LeadData) => {
     setLeadData(lead);
 
-    // Compute score according to exact formula
-    const catSums: Record<CategoryId, number> = {
-      dependency: 0,
-      safety: 0,
-      skill: 0,
-      execution: 0
-    };
+    // Compute diagnostic result using the 4-profile routing engine
+    const computed = generateAssessmentResult(answers);
 
-    QUESTIONS.forEach((q, idx) => {
-      const val = answers[idx] ?? 1;
-      catSums[q.cat] += val;
-    });
+    // Attach UTM and marketing attribution if present in URL
+    let source = 'direct';
+    let campaign: string | undefined;
+    let referrer: string | undefined;
 
-    const percentages: Record<CategoryId, number> = {
-      dependency: Math.round((catSums.dependency / 20) * 100),
-      safety: Math.round((catSums.safety / 20) * 100),
-      skill: Math.round((catSums.skill / 20) * 100),
-      execution: Math.round((catSums.execution / 20) * 100)
-    };
-
-    const points25 = {
-      dependency: (catSums.dependency / 20) * 25,
-      safety: (catSums.safety / 20) * 25,
-      skill: (catSums.skill / 20) * 25,
-      execution: (catSums.execution / 20) * 25
-    };
-
-    const calculatedTotal = Math.round(
-      points25.dependency + points25.safety + points25.skill + points25.execution
-    );
-
-    // Lowest category is the bottleneck
-    const cats: CategoryId[] = ['dependency', 'safety', 'skill', 'execution'];
-    const bottleneck = cats.reduce((lowest, current) => 
-      catSums[current] <= catSums[lowest] ? current : lowest
-    , 'dependency' as CategoryId);
-
-    // Find result category profile
-    let determinedKey = 'survivor';
-    Object.keys(RESULT_CATEGORIES).forEach((key) => {
-      const r = RESULT_CATEGORIES[key];
-      if (calculatedTotal >= r.min && calculatedTotal <= r.max) {
-        determinedKey = key;
+    try {
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        source = urlParams.get('utm_source') || urlParams.get('source') || 'direct';
+        campaign = urlParams.get('utm_campaign') || undefined;
+        referrer = document.referrer || undefined;
       }
-    });
+    } catch {
+      // Ignore URL parsing failure
+    }
 
-    setTotalScore(calculatedTotal);
-    setCategoryPercentages(percentages);
-    setBottleneckCategory(bottleneck);
-    setResultKey(determinedKey);
+    const fullResult: AssessmentResult = {
+      ...computed,
+      source,
+      campaign,
+      referrer
+    };
+
+    setAssessmentResult(fullResult);
+
+    // Persist structured lead & diagnostic payload for automation/CRM integration
+    try {
+      const storedPayload = {
+        name: lead.fullName,
+        email: lead.email,
+        whatsapp: lead.whatsapp,
+        assessmentId: fullResult.assessmentId,
+        completedAt: fullResult.completedAt,
+        scores: fullResult.scores,
+        normalizedScores: fullResult.normalizedScores,
+        profile: fullResult.profile,
+        primaryBottleneck: fullResult.primaryBottleneck,
+        leadTemperature: fullResult.leadTemperature,
+        recommendedOffer: fullResult.recommendedOffer,
+        source: fullResult.source,
+        campaign: fullResult.campaign,
+        referrer: fullResult.referrer
+      };
+      localStorage.setItem('cda_last_lead_assessment', JSON.stringify(storedPayload));
+    } catch {
+      // Ignore localStorage issues
+    }
+
+    trackEvent('assessment_completed', {
+      assessmentId: fullResult.assessmentId,
+      profile: fullResult.profile,
+      offer: fullResult.recommendedOffer,
+      temperature: fullResult.leadTemperature,
+      bottleneck: fullResult.primaryBottleneck
+    });
 
     setCurrentScreen('results');
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
@@ -135,6 +140,7 @@ export default function App() {
     setAnswers(new Array(QUESTIONS.length).fill(null));
     setCurrentQuestionIndex(0);
     setSurvivalData(null);
+    setAssessmentResult(null);
     setCurrentScreen('welcome');
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   };
@@ -148,6 +154,7 @@ export default function App() {
             if (currentScreen === 'results') {
               handleRetake();
             } else {
+              trackEvent('assessment_started');
               setCurrentScreen('welcome');
               window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
             }
@@ -161,6 +168,7 @@ export default function App() {
         {currentScreen === 'landing' && (
           <LandingView
             onStart={() => {
+              trackEvent('assessment_started');
               setCurrentScreen('welcome');
               window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
             }}
@@ -209,12 +217,9 @@ export default function App() {
           />
         )}
 
-        {currentScreen === 'results' && (
+        {currentScreen === 'results' && assessmentResult && (
           <ResultsView
-            totalScore={totalScore}
-            categoryPercentages={categoryPercentages}
-            bottleneckCategory={bottleneckCategory}
-            resultKey={resultKey}
+            assessmentResult={assessmentResult}
             leadData={leadData}
             survivalData={survivalData}
             onRetake={handleRetake}

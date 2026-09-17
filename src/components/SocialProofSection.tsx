@@ -19,7 +19,7 @@ export const SocialProofSection: React.FC = () => {
       name: 'Emeka O.',
       role: 'Senior Financial Analyst',
       location: 'Lagos, Nigeria',
-      profileFound: 'The Ready But Stuck',
+      profileFound: 'Ready but Stuck',
       highlight: 'From chasing crypto to packaging my Excel & reporting skills',
       quote:
         'I spent three years convinced that creating a second income meant learning crypto or dropshipping. The Scorecard revealed my actual bottleneck: I already had high-value corporate financial modelling skills, but I had never packaged them into a solution. I now run monthly reporting retainers for 2 SME founders on weekends—without touching my 9-to-5.',

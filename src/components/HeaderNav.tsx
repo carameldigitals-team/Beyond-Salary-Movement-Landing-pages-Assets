@@ -17,10 +17,13 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onStartScorecard, showCta 
         >
           <img 
             src={beyondSalaryLogo} 
-            alt="Beyond Salary Movement" 
+            alt="Beyond Salary Movement — Caramel Digital Academy" 
             className="h-10 sm:h-12 md:h-14 w-auto object-contain"
             referrerPolicy="no-referrer"
           />
+          <span className="hidden sm:inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#2B1B14]/70 ml-3 pl-3 border-l border-[#E1D5C5]">
+            Caramel Digital Academy
+          </span>
         </div>
 
         {showCta && (
