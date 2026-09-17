@@ -6,17 +6,142 @@ export interface ValueStackItem {
   isBonus?: boolean;
 }
 
+export type PricingStage = 'preLaunch' | 'launch' | 'standard';
+
+export interface Tier1PricingConfig {
+  preLaunch: number;
+  launch: number;
+  standard: number;
+}
+
+export interface Tier1Config {
+  name: string;
+  stage: string;
+  pricing: Tier1PricingConfig;
+  pricingStage: PricingStage;
+  launchDate: string;
+  standardPriceDate: string;
+  selarUrl: string;
+  paystackUrl: string;
+}
+
+/**
+ * Centralized Tier 1 Offer Configuration
+ * Edit pricing, pricingStage, dates, and checkout URLs here.
+ */
+export const CDA_TIER1_CONFIG: Tier1Config = {
+  name: 'Beyond Salary: Career to Cash Live Training™',
+  stage: 'Beyond Salary Income Foundation',
+
+  pricing: {
+    preLaunch: 10999,
+    launch: 14999,
+    standard: 24999
+  },
+
+  pricingStage: 'preLaunch', // Options: 'preLaunch' | 'launch' | 'standard'
+
+  launchDate: '', // Enter official launch date when available (e.g. 'October 15, 2026')
+  standardPriceDate: '', // Enter standard price activation date when available
+
+  selarUrl: '',
+  paystackUrl: ''
+};
+
+// Aliased as tier1 matching requested configuration convention
+export const tier1 = CDA_TIER1_CONFIG;
+
+/**
+ * Returns the currently active Tier 1 price based on active pricingStage.
+ */
+export function getTier1ActivePrice(config: Tier1Config = CDA_TIER1_CONFIG): number {
+  switch (config.pricingStage) {
+    case 'launch':
+      return config.pricing.launch;
+    case 'standard':
+      return config.pricing.standard;
+    case 'preLaunch':
+    default:
+      return config.pricing.preLaunch;
+  }
+}
+
+export interface Tier1StageDisplay {
+  stage: PricingStage;
+  stageBadge: string;
+  price: number;
+  headline: string;
+  supportingMessage: string;
+  positioningTag: string;
+  comparisonPrice?: number;
+  comparisonLabel?: string;
+  dateNote?: string;
+}
+
+/**
+ * Returns UI display messaging and metadata according to the active pricing stage.
+ */
+export function getTier1StageDisplay(config: Tier1Config = CDA_TIER1_CONFIG): Tier1StageDisplay {
+  const price = getTier1ActivePrice(config);
+
+  if (config.pricingStage === 'launch') {
+    return {
+      stage: 'launch',
+      stageBadge: 'LAUNCHING PRICE',
+      price: config.pricing.launch,
+      headline: 'LAUNCHING PRICE',
+      supportingMessage: 'Main launch price.',
+      positioningTag: 'OFFICIAL LAUNCH PRICING',
+      comparisonPrice: config.pricing.standard,
+      comparisonLabel: 'Standard Price',
+      dateNote: config.standardPriceDate ? `Standard price takes effect ${config.standardPriceDate}` : undefined
+    };
+  }
+
+  if (config.pricingStage === 'standard') {
+    return {
+      stage: 'standard',
+      stageBadge: 'STANDARD PRICE',
+      price: config.pricing.standard,
+      headline: 'STANDARD PRICE',
+      supportingMessage: 'Regular pricing.',
+      positioningTag: 'STANDARD PRICING',
+      comparisonPrice: undefined,
+      comparisonLabel: undefined,
+      dateNote: undefined
+    };
+  }
+
+  // Default: preLaunch
+  return {
+    stage: 'preLaunch',
+    stageBadge: 'PRE-LAUNCH PRICE',
+    price: config.pricing.preLaunch,
+    headline: 'PRE-LAUNCH PRICE',
+    supportingMessage: 'Lock in your place before the main launch.',
+    positioningTag: 'LOCK IN BEFORE THE MAIN LAUNCH',
+    comparisonPrice: config.pricing.standard,
+    comparisonLabel: 'Standard Price',
+    dateNote: config.launchDate ? `Official launch begins ${config.launchDate}` : undefined
+  };
+}
+
 export interface OfferConfig {
   id: OfferKey;
   tierNumber: 1 | 2 | 3 | 4;
   profileId: ProfileKey;
   productName: string;
   pathwayName: string;
+  stage?: string;
   tagline: string;
   duration?: string;
   delivery?: string;
   trainingModel?: string;
   primaryTransformation: string;
+  pricing?: Tier1PricingConfig;
+  pricingStage?: PricingStage;
+  launchDate?: string;
+  standardPriceDate?: string;
   foundingPrice: number;
   standardPrice: number;
   cohortStatus: string;
@@ -93,7 +218,7 @@ export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
     message:
       'Your first priority is not to rush into multiple income streams. Your first priority is clarity.',
     recommendedOfferId: 'tier_1',
-    recommendedPathway: 'Beyond Salary Clarity & Foundation Cohort',
+    recommendedPathway: 'Beyond Salary: Career to Cash Live Training™',
     futurePathwayName: 'Beyond Salary Income Foundation',
     coreSituation:
       'You are significantly dependent on salary and/or financially exposed and do not yet have sufficient skill or execution readiness to confidently build an additional income pathway.',
@@ -129,7 +254,7 @@ export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
     message:
       'Your biggest challenge may not be lack of opportunity. It may be lack of direction and focus. Your first priority is clarity.',
     recommendedOfferId: 'tier_1',
-    recommendedPathway: 'Beyond Salary Clarity & Foundation Cohort',
+    recommendedPathway: 'Beyond Salary: Career to Cash Live Training™',
     futurePathwayName: 'Beyond Salary Skill-to-Income™',
     coreSituation:
       'You recognize the need for income diversification and are actively exploring possibilities, but need focused direction to turn interest into market-ready capability.',
@@ -165,7 +290,7 @@ export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
     message:
       'You are not starting from zero. Your first priority is to establish a clear income-building foundation before investing significant time or money.',
     recommendedOfferId: 'tier_1',
-    recommendedPathway: 'Beyond Salary Clarity & Foundation Cohort',
+    recommendedPathway: 'Beyond Salary: Career to Cash Live Training™',
     futurePathwayName: 'Beyond Salary Income Accelerator™',
     coreSituation:
       'You have skills, ideas, experience, or previous attempts, but need the right direction, structure, and operational confidence before investing significant resources.',
@@ -201,7 +326,7 @@ export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
     message:
       'Even experienced income builders benefit from clarity around positioning, systems, digital skills, AI opportunities, and sustainable growth.',
     recommendedOfferId: 'tier_1',
-    recommendedPathway: 'Beyond Salary Clarity & Foundation Cohort',
+    recommendedPathway: 'Beyond Salary: Career to Cash Live Training™',
     futurePathwayName: 'Sovereign Income Multiplier System™',
     coreSituation:
       'You already have active income beyond salary, but need clearer positioning, streamlined systems, and leveraged workflows to scale sustainably without burnout.',
@@ -236,27 +361,31 @@ export const CDA_OFFERS: Record<OfferKey, OfferConfig> = {
     id: 'tier_1',
     tierNumber: 1,
     profileId: 'salary_survivor',
-    productName: 'Beyond Salary Clarity & Foundation Cohort',
-    pathwayName: 'BEYOND SALARY CLARITY & FOUNDATION COHORT',
+    productName: CDA_TIER1_CONFIG.name,
+    pathwayName: CDA_TIER1_CONFIG.stage,
+    stage: CDA_TIER1_CONFIG.stage,
     tagline: 'Before you build more income, you need clarity on what to build, why to build it, and where to start.',
     delivery: 'Live Interactive Masterclass + Practical Action Labs',
     trainingModel: 'Diagnose → Establish Clarity → Build Foundation → Personalized Roadmap',
     primaryTransformation:
       'Understand your Beyond Salary Scorecard profile, audit your transferable skills, overcome information overload, and create your documented Beyond Salary Roadmap.',
-    foundingPrice: 10999,
-    standardPrice: 20999,
-    cohortStatus: 'FOUNDING COHORT 1 ENROLLMENT OPEN',
-    cohortCapacityText: 'First 25 participants: ₦10,999 (Standard: ₦20,999)',
-    selarUrl: '',
-    paystackUrl: '',
+    pricing: CDA_TIER1_CONFIG.pricing,
+    pricingStage: CDA_TIER1_CONFIG.pricingStage,
+    launchDate: CDA_TIER1_CONFIG.launchDate,
+    standardPriceDate: CDA_TIER1_CONFIG.standardPriceDate,
+    foundingPrice: getTier1ActivePrice(CDA_TIER1_CONFIG),
+    standardPrice: CDA_TIER1_CONFIG.pricing.standard,
+    cohortStatus: 'ENROLLMENT OPEN',
+    selarUrl: CDA_TIER1_CONFIG.selarUrl,
+    paystackUrl: CDA_TIER1_CONFIG.paystackUrl,
     totalAttributedValue: 37500,
     valueStack: [
-      { name: 'Beyond Salary Career Compass (Foundational Guide)', value: 7500 },
-      { name: 'Beyond Salary Career to Cash (Implementation Blueprint)', value: 7500 },
-      { name: 'Beyond Salary AI Prompt Vault (Curated AI Prompt Library)', value: 7500 },
-      { name: 'Live Clarity & Foundation Intensive Training (Interactive Cohort Workshop)', value: 15000 },
-      { name: 'Caramel Digital Academy Private Cohort Community Support', value: 0, isBonus: true },
-      { name: 'Accountability & Implementation Action Group', value: 0, isBonus: true }
+      { name: 'Beyond Salary Career Compass', value: 7500 },
+      { name: 'Beyond Salary Career to Cash', value: 7500 },
+      { name: 'Beyond Salary AI Prompt Vault', value: 7500 },
+      { name: 'Live Career to Cash Training', value: 15000 },
+      { name: 'Community Support', value: 0, isBonus: true },
+      { name: 'Accountability', value: 0, isBonus: true }
     ],
     whatYouWillWorkOn: [
       'Understanding your Beyond Salary Scorecard profile and current income vulnerability.',

@@ -126,7 +126,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
       <section className="pt-10 pb-16 md:pt-14 md:pb-24 bg-[#2B1B14] text-[#F3EDE3] border-b border-[#4A3026]">
         <div className="max-w-[1080px] mx-auto px-5">
           {/* Centralized Target Audience Callout Badge */}
-          <div className="flex justify-center mb-8 md:mb-10 text-center">
+          <div className="flex justify-center mb-6 md:mb-8 text-center">
             <motion.div
               initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -181,19 +181,21 @@ export const LandingView: React.FC<LandingViewProps> = ({ onStart }) => {
             </motion.div>
           </div>
 
+          {/* Centralized Main Headline */}
+          <div className="text-center max-w-4xl mx-auto mb-10 md:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-[#F8F4EC] leading-[1.16] tracking-tight">
+              YOU'VE DONE EVERYTHING RIGHT.
+              <span className="block mt-2 sm:mt-3 text-[#EFE6D6]">
+                SO WHY DOES ONE SALARY STILL FEEL SO UNSAFE?
+              </span>
+            </h1>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             
             <div className="lg:col-span-7">
-              {/* Main Headline */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.1rem] font-bold text-[#F8F4EC] leading-[1.15] tracking-tight">
-                YOU'VE DONE EVERYTHING RIGHT.
-                <span className="block mt-2 text-[#EFE6D6]">
-                  SO WHY DOES ONE SALARY STILL FEEL SO UNSAFE?
-                </span>
-              </h1>
-
               {/* Subheadline */}
-              <div className="mt-6 space-y-3 text-base md:text-lg text-[#F3EDE3] leading-relaxed">
+              <div className="space-y-3 text-base md:text-lg text-[#F3EDE3] leading-relaxed">
                 <p>
                   You went to school. You got the job. You work hard and carry your responsibilities.
                 </p>

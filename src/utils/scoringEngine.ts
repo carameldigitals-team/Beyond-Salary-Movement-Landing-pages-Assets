@@ -194,7 +194,7 @@ export function determineProfile(
 /**
  * Maps the profile to its recommended entry offer.
  * Under the unified entry funnel strategy, ALL profiles enter through
- * the ₦10,999 Beyond Salary Clarity & Foundation Cohort (tier_1).
+ * the Beyond Salary: Career to Cash Live Training™ (tier_1).
  */
 export function getRecommendedOffer(_profile: ProfileKey): OfferKey {
   return 'tier_1';

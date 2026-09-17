@@ -8,7 +8,10 @@ import {
   CDA_BRAND_CONFIG, 
   CDA_PROFILES, 
   CDA_OFFERS, 
-  CDA_BOTTLENECKS 
+  CDA_BOTTLENECKS,
+  CDA_TIER1_CONFIG,
+  getTier1ActivePrice,
+  getTier1StageDisplay
 } from '../data/cdaConfig';
 import { getDimensionRating } from '../utils/scoringEngine';
 import { trackEvent } from '../utils/analytics';
@@ -53,8 +56,9 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
   onRetake
 }) => {
   const profile = CDA_PROFILES[assessmentResult.profile] || CDA_PROFILES.salary_survivor;
-  // Core strategic shift: All profiles converge into the ₦10,999 Beyond Salary Clarity & Foundation Cohort
   const offer = CDA_OFFERS.tier_1;
+  const activePrice = getTier1ActivePrice(CDA_TIER1_CONFIG);
+  const stageDisplay = getTier1StageDisplay(CDA_TIER1_CONFIG);
   const bottleneck = CDA_BOTTLENECKS[assessmentResult.primaryBottleneck] || CDA_BOTTLENECKS.clarity;
 
   const [animatedScore, setAnimatedScore] = useState(0);
@@ -78,7 +82,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
     trackEvent('offer_recommended', {
       offerId: offer.id,
       productName: offer.productName,
-      price: offer.foundingPrice
+      price: activePrice
     });
 
     // Score gauge animation
@@ -574,14 +578,14 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                   </span>
                 </div>
                 <h4 className="font-bold text-sm text-[#FFFFFF] mb-1">
-                  Clarity & Foundation Cohort
+                  {offer.productName}
                 </h4>
                 <p className="text-xs text-[#E1D5C5] leading-relaxed">
-                  Live cohort to understand your profile, audit your skills, and remove information overload.
+                  Live cohort training to understand your profile, audit your skills, and establish your Career-to-Cash foundation.
                 </p>
               </div>
               <div className="mt-3 text-[11px] font-extrabold text-[#FFBE4D]">
-                Investment: ₦10,999
+                Investment: {formatNaira(activePrice)}
               </div>
             </div>
 
@@ -631,7 +635,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
           {/* Reassurance Callout */}
           <div className="p-5 bg-[#F8F4EC] border border-[#E1D5C5] rounded-2xl text-center text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium">
             <strong className="text-[#2B1B14] block mb-1">The Caramel Digital Academy Principle:</strong>
-            "Before you build more income, you need clarity on what to build. Advanced training without clarity creates confusion. That is why every participant begins with the ₦10,999 Beyond Salary Clarity & Foundation Cohort."
+            "Before you build more income, you need clarity on what to build. Advanced training without clarity creates confusion. That is why every participant begins with the {offer.productName} ({formatNaira(activePrice)})."
           </div>
         </div>
       </section>
@@ -646,10 +650,10 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               <span>Your Single Recommended Next Step</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2B1B14] tracking-tight">
-              Beyond Salary Clarity & Foundation Cohort
+              {offer.productName}
             </h2>
             <p className="mt-2 text-sm sm:text-base text-[#5C514B] font-medium leading-relaxed">
-              Your Scorecard showed you where you are. The Clarity & Foundation Cohort helps you understand where to go next.
+              Stage: <strong className="text-[#2B1B14]">{offer.stage || 'Beyond Salary Income Foundation'}</strong> • Your Scorecard showed you where you are. This training provides your structured pathway forward.
             </p>
           </div>
 
@@ -659,7 +663,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
             <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-[#E1D5C5]">
               <div>
                 <span className="inline-block text-[11px] font-extrabold tracking-wider uppercase px-3 py-1 rounded-full bg-[#2B1B14] text-[#C9A227] mr-2">
-                  THE ENTRY POINT INTO THE BEYOND SALARY MOVEMENT™
+                  STAGE: {offer.stage || 'BEYOND SALARY INCOME FOUNDATION'}
                 </span>
                 <span className="inline-flex items-center gap-1 text-xs font-bold text-[#5C514B] mt-1 sm:mt-0">
                   <Clock className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -668,7 +672,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               </div>
 
               <div className="bg-[#FFBE4D]/20 border border-[#C9A227] px-3.5 py-1 rounded-full text-xs font-bold text-[#2B1B14]">
-                {offer.cohortStatus}
+                {stageDisplay.stageBadge}
               </div>
             </div>
 
@@ -701,7 +705,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               </p>
             </div>
 
-            {/* What You'll Experience Inside the Cohort (10 Core Deliverables) */}
+            {/* What You'll Experience Inside the Cohort */}
             <div className="mb-8">
               <h4 className="text-base font-bold text-[#2B1B14] mb-3 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-[#C9A227]" />
@@ -733,7 +737,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               </div>
             </div>
 
-            {/* Included Foundational 3-Book Digital Bundle Callout */}
+            {/* Included Foundational 3-Asset Digital Bundle Callout */}
             <div className="mb-8 p-5 rounded-2xl bg-[#C9A227]/10 border border-[#C9A227]/40">
               <div className="flex items-start gap-3">
                 <div className="p-2 bg-[#C9A227] text-[#2B1B14] rounded-xl shrink-0">
@@ -741,10 +745,10 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                 </div>
                 <div>
                   <div className="text-xs font-extrabold uppercase tracking-wider text-[#2B1B14]">
-                    Special Program Bonus Included Free (₦22,500 Value)
+                    Special Program Assets Included (₦22,500 Attributed Value)
                   </div>
                   <p className="text-xs sm:text-sm text-[#5C514B] font-medium mt-1 leading-relaxed">
-                    Every enrolled cohort participant receives instant digital access to the three foundational Beyond Salary assets:
+                    Every enrolled participant receives digital access to three foundational Beyond Salary resources:
                     <strong> Beyond Salary Career Compass</strong> (₦7,500), <strong>Beyond Salary Career to Cash</strong> (₦7,500), and <strong>Beyond Salary AI Prompt Vault</strong> (₦7,500).
                   </p>
                 </div>
@@ -788,35 +792,48 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               </div>
             </div>
 
-            {/* Pricing Section & Single CTA Focus */}
+            {/* Pricing Section & Single CTA Focus - Genuine Staged Pricing Structure */}
             <div className="bg-[#2B1B14] text-[#F3EDE3] p-6 sm:p-8 rounded-2xl text-center mb-8 border border-[#4A3026]">
-              {offer.cohortCapacityText && (
-                <div className="inline-block text-[11px] font-bold uppercase tracking-wider text-[#FFBE4D] bg-[#3B261D] border border-[#C9A227]/40 px-3 py-1 rounded-full mb-3">
-                  {offer.cohortCapacityText}
-                </div>
-              )}
-
-              <div className="flex items-center justify-center gap-4 my-2">
-                <span className="text-base sm:text-lg text-[#E1D5C5] line-through font-semibold">
-                  {formatNaira(offer.standardPrice)}
-                </span>
-                <span className="text-3xl sm:text-4xl md:text-5xl font-black text-[#FFBE4D] tracking-tight">
-                  {formatNaira(offer.foundingPrice)}
-                </span>
+              {/* Active Stage Indicator Badge */}
+              <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#FFBE4D] bg-[#3B261D] border border-[#C9A227]/40 px-3.5 py-1 rounded-full mb-3">
+                <span className="w-2 h-2 rounded-full bg-[#FFBE4D] inline-block animate-pulse" />
+                <span>{stageDisplay.stageBadge}</span>
               </div>
 
-              <p className="text-xs text-[#E1D5C5] font-medium mt-1">
-                Founding cohort enrollment rate • 100% comprehensive practical curriculum
+              {/* Pricing Display */}
+              <div className="flex flex-wrap items-baseline justify-center gap-3 my-2">
+                <span className="text-3xl sm:text-4xl md:text-5xl font-black text-[#FFBE4D] tracking-tight">
+                  {formatNaira(activePrice)}
+                </span>
+                {stageDisplay.comparisonPrice && (
+                  <div className="text-xs sm:text-sm text-[#E1D5C5]/80 font-medium">
+                    <span>Standard Price: </span>
+                    <span className="line-through font-semibold text-[#E1D5C5]">
+                      {formatNaira(stageDisplay.comparisonPrice)}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Transparent Stage Supporting Messaging */}
+              <p className="text-xs sm:text-sm text-[#E1D5C5] font-medium mt-1.5 max-w-md mx-auto">
+                {stageDisplay.supportingMessage}
               </p>
 
-              {/* Call-to-Action Buttons */}
+              {stageDisplay.dateNote && (
+                <p className="text-[11px] text-[#FFBE4D] font-semibold mt-1">
+                  {stageDisplay.dateNote}
+                </p>
+              )}
+
+              {/* Call-to-Action Buttons with Dynamic Active Price */}
               <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
                 <button
                   onClick={() => handleCtaClick('selar')}
                   className="w-full group flex items-center justify-center gap-2 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-extrabold text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] cursor-pointer"
                 >
                   <CreditCard className="w-4 h-4" />
-                  <span>JOIN VIA SELAR</span>
+                  <span>JOIN VIA SELAR • {formatNaira(activePrice)}</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </button>
 
@@ -825,12 +842,12 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                   className="w-full group flex items-center justify-center gap-2 bg-[#03037E] hover:bg-[#040498] text-[#FFFFFF] font-extrabold text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] cursor-pointer"
                 >
                   <Zap className="w-4 h-4 text-[#FFBE4D]" />
-                  <span>JOIN VIA PAYSTACK</span>
+                  <span>JOIN VIA PAYSTACK • {formatNaira(activePrice)}</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
 
-              <div className="mt-3 text-[11px] text-[#EFE6D6] font-medium flex items-center justify-center gap-2">
+              <div className="mt-3.5 text-[11px] text-[#EFE6D6] font-medium flex items-center justify-center gap-2">
                 <span>🔒 Secure 256-bit encrypted checkout</span>
                 <span>•</span>
                 <span>Instant cohort confirmation</span>
@@ -856,7 +873,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               <span>Caramel Digital Academy Ecosystem Context</span>
             </div>
             <h4 className="text-base font-bold text-[#2B1B14] mb-2">
-              Where do you go after completing the Clarity & Foundation Cohort?
+              Where do you go after completing {offer.productName}?
             </h4>
             <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed font-medium mb-3">
               The next stage introduces practical implementation pathways—including <strong>AI Video Creation</strong>, <strong>AI Website Building</strong>, <strong>Digital Productization</strong>, the <strong>Income Accelerator™</strong>, and the <strong>Sovereign Income Multiplier System™</strong>.
@@ -932,7 +949,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
             </h3>
 
             <p className="text-xs sm:text-sm text-[#5C514B] leading-relaxed mb-4">
-              You are securing your seat in the founding cohort at the investment of <strong>{formatNaira(offer.foundingPrice)}</strong>.
+              You are securing your registration at the {stageDisplay.stageBadge.toLowerCase()} of <strong>{formatNaira(activePrice)}</strong>.
             </p>
 
             <div className="bg-[#F8F4EC] p-4 rounded-xl border border-[#E1D5C5] text-xs space-y-1.5 mb-5">
@@ -940,7 +957,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               <div><strong>Email:</strong> {leadData.email || 'On file'}</div>
               <div><strong>WhatsApp:</strong> {leadData.whatsapp || 'On file'}</div>
               <div><strong>Gateway:</strong> {showCheckoutModal.toUpperCase()}</div>
-              <div><strong>Program:</strong> Beyond Salary Clarity & Foundation Cohort</div>
+              <div><strong>Program:</strong> {offer.productName}</div>
+              <div><strong>Stage:</strong> {offer.stage || 'Beyond Salary Income Foundation'}</div>
             </div>
 
             <p className="text-[11px] text-[#5C514B] mb-5">
@@ -949,7 +967,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 
             <div className="flex flex-col gap-2.5">
               <a
-                href={`${CDA_BRAND_CONFIG.supportWhatsAppLink}&text=Hello%2C%20I%20want%20to%20complete%20my%20enrollment%20for%20${encodeURIComponent(offer.productName)}%20(${formatNaira(offer.foundingPrice)})`}
+                href={`${CDA_BRAND_CONFIG.supportWhatsAppLink}&text=Hello%2C%20I%20want%20to%20complete%20my%20enrollment%20for%20${encodeURIComponent(offer.productName)}%20(${formatNaira(activePrice)})`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-[#FFFFFF] font-bold text-sm py-3.5 px-4 rounded-xl transition-colors text-center"
