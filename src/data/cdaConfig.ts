@@ -118,7 +118,7 @@ export function getTier1StageDisplay(config: Tier1Config = CDA_TIER1_CONFIG): Ti
     stageBadge: 'PRE-LAUNCH PRICE',
     price: config.pricing.preLaunch,
     headline: 'PRE-LAUNCH PRICE',
-    supportingMessage: 'Lock in your place before the main launch.',
+    supportingMessage: `Lock in your spot before the main launch at ₦${config.pricing.standard.toLocaleString()}`,
     positioningTag: 'LOCK IN BEFORE THE MAIN LAUNCH',
     comparisonPrice: config.pricing.standard,
     comparisonLabel: 'Standard Price',
