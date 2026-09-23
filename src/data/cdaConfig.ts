@@ -30,8 +30,8 @@ export interface Tier1Config {
  * Edit pricing, pricingStage, dates, and checkout URLs here.
  */
 export const CDA_TIER1_CONFIG: Tier1Config = {
-  name: 'Beyond Salary: Career to Cash Live Training™',
-  stage: 'Beyond Salary Income Foundation',
+  name: 'Beyond Salary Foundation: Career to Cash Live Training™',
+  stage: 'Beyond Salary Foundation',
 
   pricing: {
     preLaunch: 10999,
@@ -41,10 +41,10 @@ export const CDA_TIER1_CONFIG: Tier1Config = {
 
   pricingStage: 'preLaunch', // Options: 'preLaunch' | 'launch' | 'standard'
 
-  launchDate: '', // Enter official launch date when available (e.g. 'October 15, 2026')
+  launchDate: '', // Enter official launch date when available
   standardPriceDate: '', // Enter standard price activation date when available
 
-  selarUrl: '',
+  selarUrl: 'https://selar.com/beyond-salaryfoundation',
   paystackUrl: ''
 };
 
@@ -212,13 +212,13 @@ export const CDA_BRAND_CONFIG = {
 export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
   salary_survivor: {
     id: 'salary_survivor',
-    name: 'The Salary Survivor',
+    name: 'Salary Survival',
     sub: 'You currently depend heavily on your salary and have limited financial breathing room outside your primary income.',
     primaryNeed: 'CLARITY & FOUNDATION',
     message:
       'Your first priority is not to rush into multiple income streams. Your first priority is clarity.',
     recommendedOfferId: 'tier_1',
-    recommendedPathway: 'Beyond Salary: Career to Cash Live Training™',
+    recommendedPathway: 'Beyond Salary Foundation: Career to Cash Live Training™',
     futurePathwayName: 'Beyond Salary Income Foundation',
     coreSituation:
       'You are significantly dependent on salary and/or financially exposed and do not yet have sufficient skill or execution readiness to confidently build an additional income pathway.',
@@ -248,13 +248,13 @@ export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
   },
   income_explorer: {
     id: 'income_explorer',
-    name: 'The Income Explorer',
+    name: 'Income Explorer',
     sub: 'You are aware that you need income beyond salary, and you may already be exploring different ideas, skills, tools, or opportunities.',
     primaryNeed: 'CLARITY & DIRECTION',
     message:
       'Your biggest challenge may not be lack of opportunity. It may be lack of direction and focus. Your first priority is clarity.',
     recommendedOfferId: 'tier_1',
-    recommendedPathway: 'Beyond Salary: Career to Cash Live Training™',
+    recommendedPathway: 'Beyond Salary Foundation: Career to Cash Live Training™',
     futurePathwayName: 'Beyond Salary Skill-to-Income™',
     coreSituation:
       'You recognize the need for income diversification and are actively exploring possibilities, but need focused direction to turn interest into market-ready capability.',
@@ -290,7 +290,7 @@ export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
     message:
       'You are not starting from zero. Your first priority is to establish a clear income-building foundation before investing significant time or money.',
     recommendedOfferId: 'tier_1',
-    recommendedPathway: 'Beyond Salary: Career to Cash Live Training™',
+    recommendedPathway: 'Beyond Salary Foundation: Career to Cash Live Training™',
     futurePathwayName: 'Beyond Salary Income Accelerator™',
     coreSituation:
       'You have skills, ideas, experience, or previous attempts, but need the right direction, structure, and operational confidence before investing significant resources.',
@@ -320,13 +320,13 @@ export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
   },
   income_builder: {
     id: 'income_builder',
-    name: 'The Income Builder',
+    name: 'Income Builder',
     sub: 'You already have some level of experience generating income beyond your primary salary, and are ready for intentional, sustainable growth.',
     primaryNeed: 'SYSTEMS, AI & STRATEGIC SCALE',
     message:
       'Even experienced income builders benefit from clarity around positioning, systems, digital skills, AI opportunities, and sustainable growth.',
     recommendedOfferId: 'tier_1',
-    recommendedPathway: 'Beyond Salary: Career to Cash Live Training™',
+    recommendedPathway: 'Beyond Salary Foundation: Career to Cash Live Training™',
     futurePathwayName: 'Sovereign Income Multiplier System™',
     coreSituation:
       'You already have active income beyond salary, but need clearer positioning, streamlined systems, and leveraged workflows to scale sustainably without burnout.',
@@ -355,6 +355,45 @@ export const CDA_PROFILES: Record<ProfileKey, ProfileConfig> = {
     ]
   }
 };
+
+/**
+ * Profile-specific personalized transition copy
+ */
+export interface ProfileNextMove {
+  nextMove: string;
+  recommendedOffer: string;
+}
+
+export const CDA_PROFILE_NEXT_MOVES: Record<ProfileKey, ProfileNextMove> = {
+  salary_survivor: {
+    nextMove: 'Build your income foundation before trying to build multiple income streams.',
+    recommendedOffer: 'Beyond Salary Foundation — Career to Cash Live Training™'
+  },
+  income_explorer: {
+    nextMove: 'Turn your curiosity into a clear income direction and identify an opportunity you can actually act on.',
+    recommendedOffer: 'Beyond Salary Foundation — Career to Cash Live Training™'
+  },
+  ready_but_stuck: {
+    nextMove: "You don't necessarily need more information. You need a clearer path and practical implementation.",
+    recommendedOffer: 'Beyond Salary Foundation — Career to Cash Live Training™'
+  },
+  income_builder: {
+    nextMove: 'Strengthen your foundation, sharpen your positioning and identify the next opportunity to build around your existing income strategy.',
+    recommendedOffer: 'Beyond Salary Foundation — Career to Cash Live Training™'
+  }
+};
+
+/**
+ * 6 Core Benefits for the Recommended Next Step Section
+ */
+export const CDA_RECOMMENDED_STEP_BENEFITS: string[] = [
+  'Identify digital skills and income opportunities that fit your strengths',
+  'Discover how your existing knowledge and experience can become an income-generating asset',
+  'Position yourself for opportunities beyond your 9–5',
+  'Use AI tools to accelerate your journey from skill to income',
+  'Build a simple path toward your first ₦100K beyond salary',
+  'Take practical action instead of remaining stuck in information overload'
+];
 
 export const CDA_OFFERS: Record<OfferKey, OfferConfig> = {
   tier_1: {

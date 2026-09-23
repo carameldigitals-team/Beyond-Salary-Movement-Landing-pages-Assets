@@ -10,6 +10,8 @@ import {
   CDA_OFFERS, 
   CDA_BOTTLENECKS,
   CDA_TIER1_CONFIG,
+  CDA_PROFILE_NEXT_MOVES,
+  CDA_RECOMMENDED_STEP_BENEFITS,
   getTier1ActivePrice,
   getTier1StageDisplay
 } from '../data/cdaConfig';
@@ -56,6 +58,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
   onRetake
 }) => {
   const profile = CDA_PROFILES[assessmentResult.profile] || CDA_PROFILES.salary_survivor;
+  const profileNextMove = CDA_PROFILE_NEXT_MOVES[assessmentResult.profile] || CDA_PROFILE_NEXT_MOVES.salary_survivor;
   const offer = CDA_OFFERS.tier_1;
   const activePrice = getTier1ActivePrice(CDA_TIER1_CONFIG);
   const stageDisplay = getTier1StageDisplay(CDA_TIER1_CONFIG);
@@ -258,8 +261,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
           </div>
 
           {/* Primary Profile Announcement */}
-          <div className="inline-block bg-[#03037E]/60 border border-[#C9A227]/50 px-4 py-1.5 rounded-full text-[11px] font-extrabold tracking-widest text-[#FFBE4D] uppercase mb-3">
-            YOUR BEYOND SALARY PROFILE
+          <div className="inline-block bg-[#03037E]/80 border border-[#C9A227]/50 px-4 py-1.5 rounded-full text-[11px] font-extrabold tracking-widest text-[#FFBE4D] uppercase mb-3">
+            YOUR SCORECARD RESULT
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#F8F4EC] tracking-tight">
@@ -270,17 +273,42 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
             PRIMARY NEED: {profile.primaryNeed}
           </div>
 
+          {/* Brief explanation of what the profile means */}
           <p className="mt-4 text-base sm:text-lg text-[#F3EDE3] max-w-2xl mx-auto leading-relaxed font-medium">
             "{profile.message}"
           </p>
+          <p className="mt-2 text-xs sm:text-sm text-[#E1D5C5] max-w-xl mx-auto leading-relaxed">
+            {profile.whatThisMeans}
+          </p>
+
+          {/* Profile-Specific Personalization Transition Card */}
+          <div className="mt-6 bg-[#3B261D]/90 border border-[#C9A227]/50 rounded-2xl p-4 sm:p-5 max-w-xl mx-auto text-left shadow-lg">
+            <div className="flex items-start gap-3.5">
+              <div className="p-2 rounded-xl bg-[#C9A227] text-[#2B1B14] shrink-0 mt-0.5 shadow-xs">
+                <Target className="w-5 h-5" />
+              </div>
+              <div className="space-y-1.5 flex-1">
+                <div className="text-xs font-black text-[#FFBE4D] uppercase tracking-wider">
+                  Your next move:
+                </div>
+                <p className="text-sm sm:text-base font-bold text-[#FFFFFF] leading-snug">
+                  {profileNextMove.nextMove}
+                </p>
+                <div className="pt-2 border-t border-[#C9A227]/25 flex flex-wrap items-baseline gap-1.5 text-xs text-[#E1D5C5]">
+                  <span className="font-semibold text-[#FFBE4D]">Recommended for you:</span>
+                  <span className="font-bold text-[#FFFFFF]">{profileNextMove.recommendedOffer}</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Quick Anchor Link to Action Plan */}
           <div className="mt-5">
             <a
-              href="#transformation-journey"
+              href="#recommended-next-step"
               className="inline-flex items-center gap-2 text-xs font-bold text-[#FFBE4D] hover:text-[#FFFFFF] underline underline-offset-4 transition-colors"
             >
-              <span>Jump directly to your recommended transformation step</span>
+              <span>View your recommended next step below</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </a>
           </div>
@@ -305,8 +333,124 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
         </div>
       </section>
 
-      {/* SECTION 2: YOUR DIAGNOSTIC SNAPSHOT (Four Dimensions) */}
-      <section className="py-12 md:py-16 bg-[#FFFFFF] border-b border-[#E1D5C5]">
+      {/* SECTION 2: YOUR RECOMMENDED NEXT STEP */}
+      <section id="recommended-next-step" className="py-12 sm:py-16 md:py-20 bg-[#F8F4EC] border-b border-[#E1D5C5]">
+        <div className="max-w-[780px] mx-auto px-5">
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
+            <div className="inline-flex items-center gap-1.5 bg-[#03037E] text-[#FFBE4D] px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#FFBE4D]" />
+              <span>YOUR RECOMMENDED NEXT STEP</span>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#03037E] tracking-tight">
+              BEYOND SALARY FOUNDATION
+            </h2>
+            <div className="text-xl sm:text-2xl md:text-3xl font-black text-[#C9A227] mt-1.5 tracking-tight">
+              Career to Cash Live Training™
+            </div>
+
+            {/* Supporting copy */}
+            <div className="mt-6 text-sm sm:text-base text-[#5C514B] font-medium leading-relaxed space-y-3.5 text-left sm:text-center">
+              <p>
+                You now have a clearer picture of where you are on your Beyond Salary journey.
+              </p>
+              <p>
+                The next step is to move from simply knowing what is possible to identifying a practical income opportunity you can begin building around your existing skills, experience and resources.
+              </p>
+              <p className="text-[#2B1B14] font-semibold">
+                Inside the <strong>Beyond Salary Foundation: Career to Cash Live Training™</strong>, you'll learn how to identify an income opportunity, position what you already know, and use AI and digital tools to turn your knowledge and skills into a practical income pathway.
+              </p>
+            </div>
+          </div>
+
+          {/* Benefits Card */}
+          <div className="bg-[#FFFFFF] border-2 border-[#C9A227] rounded-3xl p-6 sm:p-8 md:p-10 shadow-xl mb-8">
+            <h3 className="text-base sm:text-lg font-black text-[#03037E] mb-5 flex items-center gap-2.5">
+              <CheckCircle2 className="w-5 h-5 text-[#C9A227] shrink-0" />
+              <span>Inside the training, you'll learn how to:</span>
+            </h3>
+
+            <div className="space-y-3">
+              {CDA_RECOMMENDED_STEP_BENEFITS.map((benefit, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-start gap-3 text-xs sm:text-sm text-[#2B1B14] font-medium leading-relaxed bg-[#F8F4EC] p-3.5 rounded-xl border border-[#E1D5C5]"
+                >
+                  <Check className="w-4 h-4 text-[#C9A227] shrink-0 mt-0.5 stroke-[3]" />
+                  <span className="font-semibold text-[#2B1B14]">{benefit}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* FOUNDING PRICE CTA */}
+            <div className="mt-8 bg-[#2B1B14] text-[#F3EDE3] p-6 sm:p-8 rounded-2xl text-center border-2 border-[#C9A227] shadow-xl">
+              {/* Small label */}
+              <div className="inline-block text-[11px] font-black uppercase tracking-widest text-[#FFBE4D] bg-[#3B261D] border border-[#C9A227]/40 px-3.5 py-1 rounded-full mb-3">
+                FOUNDING COHORT 1
+              </div>
+
+              {/* Price messaging */}
+              <div className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#E1D5C5]">
+                Join at the Founding Price
+              </div>
+
+              <div className="my-2">
+                <span className="text-4xl sm:text-5xl md:text-6xl font-black text-[#FFBE4D] tracking-tight">
+                  ₦10,999
+                </span>
+              </div>
+
+              {/* Subtle supporting line */}
+              <p className="text-xs sm:text-sm text-[#E1D5C5] font-medium max-w-md mx-auto">
+                Available to the first 25 participants at this founding price.
+              </p>
+
+              {/* CTA BUTTON */}
+              <div className="mt-6 max-w-md mx-auto">
+                <a
+                  href="https://selar.com/beyond-salaryfoundation"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    trackEvent('cta_clicked', { platform: 'selar', price: 10999, profile: assessmentResult.profile });
+                    trackEvent('selar_clicked', { offerId: offer.id, price: 10999 });
+                  }}
+                  className="w-full group inline-flex items-center justify-center gap-2.5 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-black text-base sm:text-lg py-4 px-6 rounded-xl shadow-xl transition-all active:scale-[0.98] text-center"
+                >
+                  <span>GET ACCESS — ₦10,999</span>
+                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </a>
+              </div>
+
+              {/* Small reassurance underneath CTA */}
+              <p className="mt-4 text-xs sm:text-sm text-[#FFBE4D] font-bold max-w-md mx-auto leading-relaxed">
+                Secure your spot in the Founding Cohort and start building your path from career to cash.
+              </p>
+
+              <div className="mt-3.5 text-[11px] text-[#EFE6D6]/80 flex flex-wrap items-center justify-center gap-2">
+                <span>🔒 Secure 256-bit encrypted checkout via Selar</span>
+                <span>•</span>
+                <span>Instant cohort confirmation</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Smooth transition link to explore in-depth diagnostic breakdown */}
+          <div className="text-center pt-2">
+            <a
+              href="#diagnostic-snapshot"
+              className="inline-flex items-center gap-2 text-xs font-bold text-[#03037E] hover:text-[#C9A227] uppercase tracking-wider transition-colors"
+            >
+              <span>Explore Your Full Diagnostic Breakdown & Dimensions Below</span>
+              <ArrowRight className="w-3.5 h-3.5 rotate-90 text-[#C9A227]" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: YOUR DIAGNOSTIC SNAPSHOT (Four Dimensions) */}
+      <section id="diagnostic-snapshot" className="py-12 md:py-16 bg-[#FFFFFF] border-b border-[#E1D5C5]">
         <div className="max-w-[840px] mx-auto px-5">
           <div className="text-center max-w-xl mx-auto mb-10">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#C9A227] mb-1">
@@ -828,23 +972,20 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 
               {/* Call-to-Action Buttons with Dynamic Active Price */}
               <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
-                <button
-                  onClick={() => handleCtaClick('selar')}
-                  className="w-full group flex items-center justify-center gap-2 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-extrabold text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] cursor-pointer"
+                <a
+                  href="https://selar.com/beyond-salaryfoundation"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    trackEvent('cta_clicked', { platform: 'selar', price: 10999, profile: assessmentResult.profile });
+                    trackEvent('selar_clicked', { offerId: offer.id, price: 10999 });
+                  }}
+                  className="w-full group inline-flex items-center justify-center gap-2 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-black text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] text-center"
                 >
                   <CreditCard className="w-4 h-4" />
-                  <span>JOIN VIA SELAR • {formatNaira(activePrice)}</span>
+                  <span>GET ACCESS — ₦10,999</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </button>
-
-                <button
-                  onClick={() => handleCtaClick('paystack')}
-                  className="w-full group flex items-center justify-center gap-2 bg-[#03037E] hover:bg-[#040498] text-[#FFFFFF] font-extrabold text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] cursor-pointer"
-                >
-                  <Zap className="w-4 h-4 text-[#FFBE4D]" />
-                  <span>JOIN VIA PAYSTACK • {formatNaira(activePrice)}</span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </button>
+                </a>
               </div>
 
               <div className="mt-3.5 text-[11px] text-[#EFE6D6] font-medium flex items-center justify-center gap-2">
