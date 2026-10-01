@@ -17,6 +17,7 @@ import {
 } from '../data/cdaConfig';
 import { getDimensionRating } from '../utils/scoringEngine';
 import { trackEvent } from '../utils/analytics';
+import { sendAssessmentToGoogleSheets } from '../utils/backendSync';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -75,6 +76,14 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
 
+    // Ensure assessment capture to Google Sheets is dispatched (deduplicated against page reload)
+    sendAssessmentToGoogleSheets(
+      leadData,
+      assessmentResult,
+      assessmentResult.answers,
+      'NO'
+    );
+
     trackEvent('profile_assigned', {
       profile: assessmentResult.profile,
       offer: 'tier_1',
@@ -121,10 +130,29 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
     window.print();
   };
 
+  const handleOfferCtaClick = () => {
+    // Silently send second POST request with offerClicked: 'YES' to Google Apps Script
+    sendAssessmentToGoogleSheets(
+      leadData,
+      assessmentResult,
+      assessmentResult.answers,
+      'YES'
+    );
+
+    trackEvent('cta_clicked', { platform: 'selar', price: 10999, profile: assessmentResult.profile });
+    trackEvent('selar_clicked', { offerId: offer.id, price: 10999 });
+  };
+
   const handleCtaClick = (platform: 'selar' | 'paystack' | 'direct') => {
     trackEvent('cta_clicked', { platform, offerId: offer.id });
 
     if (platform === 'selar') {
+      sendAssessmentToGoogleSheets(
+        leadData,
+        assessmentResult,
+        assessmentResult.answers,
+        'YES'
+      );
       trackEvent('selar_clicked', { offerId: offer.id });
       if (offer.selarUrl) {
         window.open(offer.selarUrl, '_blank', 'noopener,noreferrer');
@@ -412,10 +440,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                   href="https://selar.com/beyond-salaryfoundation"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => {
-                    trackEvent('cta_clicked', { platform: 'selar', price: 10999, profile: assessmentResult.profile });
-                    trackEvent('selar_clicked', { offerId: offer.id, price: 10999 });
-                  }}
+                  onClick={handleOfferCtaClick}
                   className="w-full group inline-flex items-center justify-center gap-2.5 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-black text-base sm:text-lg py-4 px-6 rounded-xl shadow-xl transition-all active:scale-[0.98] text-center"
                 >
                   <span>GET ACCESS — ₦10,999</span>
@@ -976,10 +1001,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                   href="https://selar.com/beyond-salaryfoundation"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => {
-                    trackEvent('cta_clicked', { platform: 'selar', price: 10999, profile: assessmentResult.profile });
-                    trackEvent('selar_clicked', { offerId: offer.id, price: 10999 });
-                  }}
+                  onClick={handleOfferCtaClick}
                   className="w-full group inline-flex items-center justify-center gap-2 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-black text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] text-center"
                 >
                   <CreditCard className="w-4 h-4" />

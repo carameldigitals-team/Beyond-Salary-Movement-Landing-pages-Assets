@@ -3,6 +3,7 @@ import { ScreenType, SurvivalCalc, LeadData, AssessmentResult } from './types';
 import { QUESTIONS } from './data/scorecardData';
 import { generateAssessmentResult } from './utils/scoringEngine';
 import { trackEvent } from './utils/analytics';
+import { sendAssessmentToGoogleSheets } from './utils/backendSync';
 import { HeaderNav } from './components/HeaderNav';
 import { Footer } from './components/Footer';
 import { LandingView } from './components/LandingView';
@@ -70,8 +71,6 @@ export default function App() {
 
   // Lead submission -> Calculate scores and show results
   const handleLeadSubmit = (lead: LeadData) => {
-    setLeadData(lead);
-
     // Compute diagnostic result using the 4-profile routing engine
     const computed = generateAssessmentResult(answers);
 
@@ -79,6 +78,7 @@ export default function App() {
     let source = 'direct';
     let campaign: string | undefined;
     let referrer: string | undefined;
+    let professionFromUrl = '';
 
     try {
       if (typeof window !== 'undefined') {
@@ -86,10 +86,17 @@ export default function App() {
         source = urlParams.get('utm_source') || urlParams.get('source') || 'direct';
         campaign = urlParams.get('utm_campaign') || undefined;
         referrer = document.referrer || undefined;
+        professionFromUrl = urlParams.get('profession') || '';
       }
     } catch {
       // Ignore URL parsing failure
     }
+
+    const enrichedLead: LeadData = {
+      ...lead,
+      profession: lead.profession || professionFromUrl || ''
+    };
+    setLeadData(enrichedLead);
 
     const fullResult: AssessmentResult = {
       ...computed,
@@ -99,6 +106,9 @@ export default function App() {
     };
 
     setAssessmentResult(fullResult);
+
+    // Silently capture assessment to Google Apps Script backend immediately
+    sendAssessmentToGoogleSheets(enrichedLead, fullResult, answers, 'NO');
 
     // Persist structured lead & diagnostic payload for automation/CRM integration
     try {

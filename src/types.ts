@@ -64,6 +64,7 @@ export interface LeadData {
   firstName: string;
   email: string;
   whatsapp: string;
+  profession?: string;
 }
 
 export interface AssessmentResult {
