@@ -139,8 +139,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
       'YES'
     );
 
-    trackEvent('cta_clicked', { platform: 'selar', price: 10999, profile: assessmentResult.profile });
-    trackEvent('selar_clicked', { offerId: offer.id, price: 10999 });
+    trackEvent('cta_clicked', { platform: 'selar', price: activePrice, profile: assessmentResult.profile });
+    trackEvent('selar_clicked', { offerId: offer.id, price: activePrice });
   };
 
   const handleCtaClick = (platform: 'selar' | 'paystack' | 'direct') => {
@@ -411,27 +411,27 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               ))}
             </div>
 
-            {/* FOUNDING PRICE CTA */}
+            {/* ENROLLMENT ACCESS CTA */}
             <div className="mt-8 bg-[#2B1B14] text-[#F3EDE3] p-6 sm:p-8 rounded-2xl text-center border-2 border-[#C9A227] shadow-xl">
               {/* Small label */}
               <div className="inline-block text-[11px] font-black uppercase tracking-widest text-[#FFBE4D] bg-[#3B261D] border border-[#C9A227]/40 px-3.5 py-1 rounded-full mb-3">
-                FOUNDING COHORT 1
+                ENROLLMENT OPEN
               </div>
 
               {/* Price messaging */}
               <div className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#E1D5C5]">
-                Join at the Founding Price
+                Get Full Access Today
               </div>
 
               <div className="my-2">
                 <span className="text-4xl sm:text-5xl md:text-6xl font-black text-[#FFBE4D] tracking-tight">
-                  ₦10,999
+                  ₦19,999
                 </span>
               </div>
 
               {/* Subtle supporting line */}
               <p className="text-xs sm:text-sm text-[#E1D5C5] font-medium max-w-md mx-auto">
-                Available to the first 25 participants at this founding price.
+                Secure your spot in the live cohort training and start building your path from career to cash.
               </p>
 
               {/* CTA BUTTON */}
@@ -443,14 +443,14 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                   onClick={handleOfferCtaClick}
                   className="w-full group inline-flex items-center justify-center gap-2.5 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-black text-base sm:text-lg py-4 px-6 rounded-xl shadow-xl transition-all active:scale-[0.98] text-center"
                 >
-                  <span>GET ACCESS — ₦10,999</span>
+                  <span>GET ACCESS — ₦19,999</span>
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </a>
               </div>
 
               {/* Small reassurance underneath CTA */}
               <p className="mt-4 text-xs sm:text-sm text-[#FFBE4D] font-bold max-w-md mx-auto leading-relaxed">
-                Secure your spot in the Founding Cohort and start building your path from career to cash.
+                Secure your spot today and start building your path from career to cash.
               </p>
 
               <div className="mt-3.5 text-[11px] text-[#EFE6D6]/80 flex flex-wrap items-center justify-center gap-2">
@@ -1005,7 +1005,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                   className="w-full group inline-flex items-center justify-center gap-2 bg-[#C9A227] hover:bg-[#D4AF37] text-[#2B1B14] font-black text-sm sm:text-base py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] text-center"
                 >
                   <CreditCard className="w-4 h-4" />
-                  <span>GET ACCESS — ₦10,999</span>
+                  <span>GET ACCESS — ₦19,999</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </a>
               </div>

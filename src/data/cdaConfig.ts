@@ -34,12 +34,12 @@ export const CDA_TIER1_CONFIG: Tier1Config = {
   stage: 'Beyond Salary Foundation',
 
   pricing: {
-    preLaunch: 10999,
-    launch: 14999,
-    standard: 24999
+    preLaunch: 19999,
+    launch: 19999,
+    standard: 19999
   },
 
-  pricingStage: 'preLaunch', // Options: 'preLaunch' | 'launch' | 'standard'
+  pricingStage: 'standard', // Options: 'preLaunch' | 'launch' | 'standard'
 
   launchDate: '', // Enter official launch date when available
   standardPriceDate: '', // Enter standard price activation date when available
@@ -87,42 +87,42 @@ export function getTier1StageDisplay(config: Tier1Config = CDA_TIER1_CONFIG): Ti
   if (config.pricingStage === 'launch') {
     return {
       stage: 'launch',
-      stageBadge: 'LAUNCHING PRICE',
+      stageBadge: 'ENROLLMENT OPEN',
       price: config.pricing.launch,
-      headline: 'LAUNCHING PRICE',
-      supportingMessage: 'Main launch price.',
-      positioningTag: 'OFFICIAL LAUNCH PRICING',
-      comparisonPrice: config.pricing.standard,
-      comparisonLabel: 'Standard Price',
-      dateNote: config.standardPriceDate ? `Standard price takes effect ${config.standardPriceDate}` : undefined
-    };
-  }
-
-  if (config.pricingStage === 'standard') {
-    return {
-      stage: 'standard',
-      stageBadge: 'STANDARD PRICE',
-      price: config.pricing.standard,
-      headline: 'STANDARD PRICE',
-      supportingMessage: 'Regular pricing.',
-      positioningTag: 'STANDARD PRICING',
+      headline: 'OFFICIAL ACCESS PRICE',
+      supportingMessage: 'Full access to the live masterclass, toolkits, and implementation roadmap.',
+      positioningTag: 'OFFICIAL PRICING',
       comparisonPrice: undefined,
       comparisonLabel: undefined,
       dateNote: undefined
     };
   }
 
-  // Default: preLaunch
+  if (config.pricingStage === 'standard') {
+    return {
+      stage: 'standard',
+      stageBadge: 'ENROLLMENT OPEN',
+      price: config.pricing.standard,
+      headline: 'OFFICIAL ACCESS PRICE',
+      supportingMessage: 'Full access to the live masterclass, toolkits, and implementation roadmap.',
+      positioningTag: 'OFFICIAL PRICING',
+      comparisonPrice: undefined,
+      comparisonLabel: undefined,
+      dateNote: undefined
+    };
+  }
+
+  // Default: standard pricing
   return {
-    stage: 'preLaunch',
-    stageBadge: 'PRE-LAUNCH PRICE',
-    price: config.pricing.preLaunch,
-    headline: 'PRE-LAUNCH PRICE',
-    supportingMessage: `Lock in your spot before the main launch at ₦${config.pricing.standard.toLocaleString()}`,
-    positioningTag: 'LOCK IN BEFORE THE MAIN LAUNCH',
-    comparisonPrice: config.pricing.standard,
-    comparisonLabel: 'Standard Price',
-    dateNote: config.launchDate ? `Official launch begins ${config.launchDate}` : undefined
+    stage: 'standard',
+    stageBadge: 'ENROLLMENT OPEN',
+    price: config.pricing.standard,
+    headline: 'OFFICIAL ACCESS PRICE',
+    supportingMessage: 'Full access to the live masterclass, toolkits, and implementation roadmap.',
+    positioningTag: 'OFFICIAL PRICING',
+    comparisonPrice: undefined,
+    comparisonLabel: undefined,
+    dateNote: undefined
   };
 }
 
