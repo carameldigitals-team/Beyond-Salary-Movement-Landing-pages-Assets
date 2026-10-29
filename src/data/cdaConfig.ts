@@ -203,8 +203,8 @@ export const CDA_BRAND_CONFIG = {
     softCream: '#EFE6D6'
   },
   supportEmail: 'support@carameldigitalacademy.com',
-  supportWhatsApp: '+2348000000000',
-  supportWhatsAppLink: 'https://wa.me/2348000000000?text=Hello%2C%20I%20completed%20the%20Beyond%20Salary%20Scorecard%20and%20have%20a%20question.',
+  supportWhatsApp: '+2347039393757',
+  supportWhatsAppLink: 'https://wa.me/2347039393757?text=Hello%2C%20I%20completed%20the%20Beyond%20Salary%20Scorecard%20and%20have%20a%20question.',
   guaranteeDisclaimer:
     'This program is designed to give you the knowledge, practical tools, implementation experience and support to take your next step with greater clarity. Your actual results will depend on your implementation, market, offer and circumstances.'
 };

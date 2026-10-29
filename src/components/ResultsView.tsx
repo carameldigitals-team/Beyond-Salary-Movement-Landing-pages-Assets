@@ -1130,7 +1130,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 
             <div className="flex flex-col gap-2.5">
               <a
-                href={`${CDA_BRAND_CONFIG.supportWhatsAppLink}&text=Hello%2C%20I%20want%20to%20complete%20my%20enrollment%20for%20${encodeURIComponent(offer.productName)}%20(${formatNaira(activePrice)})`}
+                href={`https://wa.me/2347039393757?text=Hello%2C%20I%20want%20to%20complete%20my%20enrollment%20for%20${encodeURIComponent(offer.productName)}%20(${formatNaira(activePrice)})`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-[#FFFFFF] font-bold text-sm py-3.5 px-4 rounded-xl transition-colors text-center"
